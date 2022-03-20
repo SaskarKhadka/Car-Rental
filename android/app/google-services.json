@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "366638757583",
+    "firebase_url": "https://flash-chat-c44fe-default-rtdb.firebaseio.com",
+    "project_id": "flash-chat-c44fe",
+    "storage_bucket": "flash-chat-c44fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366638757583:android:d4e49cbdfcbacd8c99e9ba",
+        "android_client_info": {
+          "package_name": "com.example.car_rental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366638757583-8bdq034mp71ss4so7uc5en48q2sgogoh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADGjIy2-qD1tlEFGid-MF92XkwCMLAukI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366638757583-8bdq034mp71ss4so7uc5en48q2sgogoh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
