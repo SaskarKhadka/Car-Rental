@@ -63,10 +63,10 @@ class Database {
     await firestoreInstance.collection("cars").doc(id).delete();
   }
 
-  static placeOrder(Map<String, dynamic> orderDetails) async {
-    final orderRef = firestoreInstance.collection("orders").doc();
-    await orderRef.set(orderDetails);
-  }
+  // static placeOrder(Map<String, dynamic> orderDetails) async {
+  //   final orderRef = firestoreInstance.collection("orders").doc();
+  //   await orderRef.set(orderDetails);
+  // }
 
   static bool? checkAvailability(
       Map<String, dynamic> data, DateTime? pickUp, DateTime? dropOff) {
@@ -131,5 +131,10 @@ class Database {
                 );
               }
             }).toList());
+  }
+
+  static placeOrder(Map<String, dynamic> orderDetails) async {
+    final orderRef = firestoreInstance.collection("orders").doc();
+    await orderRef.set(orderDetails);
   }
 }

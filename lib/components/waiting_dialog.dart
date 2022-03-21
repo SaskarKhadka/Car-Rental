@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 
 class WaitingDialog extends StatelessWidget {
   final String title;
-  const WaitingDialog({required this.title});
+  final Color borderColor;
+  final Color progressIndicatorColor;
+  final Color textColor;
+  const WaitingDialog({
+    required this.title,
+    this.borderColor = Colors.black,
+    this.progressIndicatorColor = Colors.black,
+    this.textColor = Colors.black,
+  });
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: const Color(0xff141a1e),
+      backgroundColor: borderColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(7.0),
       ),
@@ -23,20 +31,20 @@ class WaitingDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Colors.black,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                progressIndicatorColor,
               ),
-              backgroundColor: Colors.black.withOpacity(0.5),
+              backgroundColor: progressIndicatorColor.withOpacity(0.5),
             ),
             const SizedBox(
               width: 15.0,
             ),
             Text(
               title + '...Please Wait...',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 14.0,
-                color: Colors.black,
+                color: textColor,
               ),
             )
           ],

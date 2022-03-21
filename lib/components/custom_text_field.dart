@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final IconData icon;
   final bool isEmail;
   final bool isPhoneNumber;
+  final bool isTransactionPin;
+  final Color color;
 
   const CustomTextField({
     Key? key,
@@ -16,11 +18,40 @@ class CustomTextField extends StatelessWidget {
     required this.icon,
     this.isEmail = false,
     this.isPhoneNumber = false,
+    this.isTransactionPin = false,
+    this.color = Colors.black,
   }) : super(key: key);
 
-  String? validateUserName(String? username) {
+  String? validate(String? username) {
     if (username!.isEmpty) {
       return "Required";
+    } else {
+      return null;
+    }
+  }
+
+  bool isNumeric(String? s) {
+    if (s == null) {
+      return false;
+    }
+    return double.tryParse(s) != null;
+  }
+
+  String? validatePhoneNumber(String? value) {
+    if (value!.isEmpty) {
+      return "Required";
+    } else if (value.length != 10 || !isNumeric(value)) {
+      return "Invalid phone number";
+    } else {
+      return null;
+    }
+  }
+
+  String? validatePin(String? value) {
+    if (value!.isEmpty) {
+      return "Required";
+    } else if (value.length != 4 || !isNumeric(value)) {
+      return "Invalid transaction pin";
     } else {
       return null;
     }
@@ -42,27 +73,36 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      validator: isEmail ? validateEmail : validateUserName,
-      cursorColor: Colors.black,
-      keyboardType:
-          isPhoneNumber ? TextInputType.number : TextInputType.emailAddress,
+      validator: isEmail
+          ? validateEmail
+          : isPhoneNumber
+              ? validatePhoneNumber
+              : isTransactionPin
+                  ? validatePin
+                  : validate,
+      cursorColor: color,
+      keyboardType: isPhoneNumber || isTransactionPin
+          ? TextInputType.number
+          : TextInputType.emailAddress,
       decoration: InputDecoration(
         prefixIcon: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Icon(
             icon,
-            color: Colors.black,
+            color: color,
           ),
         ),
         label: Text(
           labelText,
         ),
-        labelStyle: kTextFieldLabelStyle,
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+        labelStyle: kTextFieldLabelStyle.copyWith(
+          color: color,
         ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: color),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: color),
         ),
       ),
       style: kTextFieldTextStyle,

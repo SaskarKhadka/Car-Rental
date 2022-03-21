@@ -351,38 +351,38 @@ class _HomePageState extends State<HomePage> {
                                   //         rootNavigator: true)
                                   //     .pop();
                                   navigatorKey.currentState!.pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        CircularProgressIndicator(
-                                          color: Colors.white,
-                                          backgroundColor: Colors.black,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  await Database.placeOrder({
-                                    "pickUpDate": Provider.of<DateState>(
-                                            context,
-                                            listen: false)
-                                        .pickUpDate,
-                                    "dropOffDate": Provider.of<DateState>(
-                                            context,
-                                            listen: false)
-                                        .dropOffDate,
-                                    "pickUpLocation":
-                                        pickUpLocationController.text.trim(),
-                                    "dropOffLocation":
-                                        dropOffLocationController.text.trim(),
-                                    "timeStamp": DateTime.now(),
-                                    "placedBy": Authentication.userID,
-                                  });
+                                  // showDialog(
+                                  //   context: context,
+                                  //   builder: (context) => Column(
+                                  //     mainAxisSize: MainAxisSize.min,
+                                  //     mainAxisAlignment:
+                                  //         MainAxisAlignment.center,
+                                  //     children: const [
+                                  //       CircularProgressIndicator(
+                                  //         color: Colors.white,
+                                  //         backgroundColor: Colors.black,
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // );
+                                  // await Database.placeOrder({
+                                  //   "pickUpDate": Provider.of<DateState>(
+                                  //           context,
+                                  //           listen: false)
+                                  //       .pickUpDate,
+                                  //   "dropOffDate": Provider.of<DateState>(
+                                  //           context,
+                                  //           listen: false)
+                                  //       .dropOffDate,
+                                  //   "pickUpLocation":
+                                  //       pickUpLocationController.text.trim(),
+                                  //   "dropOffLocation":
+                                  //       dropOffLocationController.text.trim(),
+                                  //   "timeStamp": DateTime.now(),
+                                  //   "placedBy": Authentication.userID,
+                                  // });
 
-                                  navigatorKey.currentState!.pop();
+                                  // navigatorKey.currentState!.pop();
 
                                   navigatorKey.currentState!
                                       .pushNamed(AvailableCars.id, arguments: {

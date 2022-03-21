@@ -23,7 +23,7 @@ const TextStyle kTextFieldTextStyle = TextStyle(
 
 const TextStyle kAppName = TextStyle(
   color: Color(0xff181E23),
-  fontSize: 150.0,
+  fontSize: 180.0,
   fontWeight: FontWeight.bold,
   fontFamily: "Corinthia",
 );

@@ -269,7 +269,7 @@ packages:
     source: hosted
     version: "0.6.3"
   khalti:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: khalti
       url: "https://pub.dartlang.org"

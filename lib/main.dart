@@ -12,6 +12,7 @@ import 'package:car_rental/state/date_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:khalti/khalti.dart';
 import 'package:provider/provider.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/signup_screen.dart';
@@ -20,6 +21,7 @@ import 'package:car_rental/state/password_eye.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(CarRental());
 }
 
@@ -35,6 +37,7 @@ class CarRental extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CarState()),
         ChangeNotifierProvider(create: (context) => DateState()),
       ],
+      // "test_public_key_76063d06952d4cc48cee6fd516fe41b8"
       builder: (context, _) => MaterialApp(
         title: 'car_rental',
         theme: ThemeData(

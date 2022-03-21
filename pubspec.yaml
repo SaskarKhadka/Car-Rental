@@ -37,6 +37,7 @@ dependencies:
   google_maps_flutter: ^2.1.2
   fluttertoast: ^8.0.9
   khalti_flutter: ^2.0.2
+  khalti: ^1.0.2
 
 
 
@@ -92,6 +93,9 @@ flutter:
     - family: Corinthia
       fonts:
         - asset: fonts/Corinthia-Regular.ttf
+    - family: Bungee
+      fonts:
+        - asset: fonts/Bungee-Regular.ttf
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
