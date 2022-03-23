@@ -2,7 +2,21 @@ import 'package:car_rental/main.dart';
 import 'package:flutter/material.dart';
 
 class CarDetailsDialog extends StatelessWidget {
-  const CarDetailsDialog({Key? key}) : super(key: key);
+  final String brand;
+  final String type;
+  final String totalSeats;
+  final String mileage;
+  final String registrationNumber;
+  final String ratePerDay;
+  const CarDetailsDialog(
+      {Key? key,
+      required this.brand,
+      required this.type,
+      required this.totalSeats,
+      required this.mileage,
+      required this.registrationNumber,
+      required this.ratePerDay})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -101,12 +115,12 @@ class CarDetailsDialog extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.01,
                 ),
-                const Flexible(
+                Flexible(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Brand: Toyota',
-                      style: TextStyle(
+                      'Brand: $brand',
+                      style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontSize: 16.0,
                         color: Colors.white,
@@ -118,12 +132,12 @@ class CarDetailsDialog extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.005,
                 ),
-                const Flexible(
+                Flexible(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      "Type: SUV",
-                      style: TextStyle(
+                      "Type: $type",
+                      style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontSize: 16.0,
                         color: Colors.white,
@@ -134,46 +148,29 @@ class CarDetailsDialog extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.005,
                 ),
-                const Flexible(
+                // Flexible(
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(left: 16.0),
+                //     child: Text(
+                //       'Brand: Toyota',
+                //       style: const TextStyle(
+                //         fontFamily: "Montserrat",
+                //         fontSize: 16.0,
+                //         color: Colors.white,
+                //         letterSpacing: 1.3,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(
+                //   height: size.height * 0.005,
+                // ),
+                Flexible(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Brand: Toyota',
-                      style: TextStyle(
-                        fontFamily: "Montserrat",
-                        fontSize: 16.0,
-                        color: Colors.white,
-                        letterSpacing: 1.3,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: size.height * 0.005,
-                ),
-                const Flexible(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Total Seats: 300',
-                      style: TextStyle(
-                        fontFamily: "Montserrat",
-                        fontSize: 16.0,
-                        color: Colors.white,
-                        letterSpacing: 1.3,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: size.height * 0.005,
-                ),
-                const Flexible(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Mileage: 125 km/lt',
-                      style: TextStyle(
+                      'Total Seats: $totalSeats',
+                      style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontSize: 16.0,
                         color: Colors.white,
@@ -185,12 +182,12 @@ class CarDetailsDialog extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.005,
                 ),
-                const Flexible(
+                Flexible(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Registration: abdc123',
-                      style: TextStyle(
+                      'Mileage: $mileage km/lt',
+                      style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontSize: 16.0,
                         color: Colors.white,
@@ -202,12 +199,29 @@ class CarDetailsDialog extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.005,
                 ),
-                const Flexible(
+                Flexible(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Rate: Rs. 135/day',
-                      style: TextStyle(
+                      'Registration: $registrationNumber',
+                      style: const TextStyle(
+                        fontFamily: "Montserrat",
+                        fontSize: 16.0,
+                        color: Colors.white,
+                        letterSpacing: 1.3,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.005,
+                ),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Rate: Rs. $ratePerDay/day',
+                      style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontSize: 16.0,
                         color: Colors.white,

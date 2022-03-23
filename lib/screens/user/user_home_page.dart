@@ -2,7 +2,7 @@
 import 'package:car_rental/screens/admin/tab_pages/cars.dart';
 import 'package:car_rental/screens/admin/tab_pages/history.dart';
 import 'package:car_rental/screens/user/tab_pages/home_page.dart';
-import 'package:car_rental/screens/user/tab_pages/user_history.dart';
+import 'package:car_rental/screens/user/tab_pages/user_orders.dart';
 import 'package:car_rental/screens/user/tab_pages/user_profile.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -41,19 +41,19 @@ class _UserHomePageState extends State<UserHomePage>
         controller: tabController,
         children: const [
           HomePage(),
-          UserHistory(),
+          UserOrders(),
           UserProfile(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: const Color(0xffd17842),
+        // selectedItemColor: const Color(0xffd17842),
+        selectedItemColor: Colors.white,
         unselectedItemColor: const Color(0xff4d4f52),
         showSelectedLabels: true,
         showUnselectedLabels: false,
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(EvaIcons.homeOutline), label: "Requests"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Requests"),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.carOutline), label: "Cars"),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),

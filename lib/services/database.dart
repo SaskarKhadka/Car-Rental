@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:car_rental/model/car.dart';
+import 'package:car_rental/model/order.dart';
 import 'package:car_rental/model/user.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -62,11 +63,6 @@ class Database {
   static Future<void> deleteCar({String? id}) async {
     await firestoreInstance.collection("cars").doc(id).delete();
   }
-
-  // static placeOrder(Map<String, dynamic> orderDetails) async {
-  //   final orderRef = firestoreInstance.collection("orders").doc();
-  //   await orderRef.set(orderDetails);
-  // }
 
   static bool? checkAvailability(
       Map<String, dynamic> data, DateTime? pickUp, DateTime? dropOff) {
@@ -136,5 +132,39 @@ class Database {
   static placeOrder(Map<String, dynamic> orderDetails) async {
     final orderRef = firestoreInstance.collection("orders").doc();
     await orderRef.set(orderDetails);
+  }
+
+  static Stream<List<Order>> ordersStream() {
+    // firestoreInstance.collection("orders").snapshots().forEach((element) {
+    //   final data = element.docs;
+    //   for (final value in data) {
+    //     print(value.data());
+    //   }
+    // });
+    return firestoreInstance
+        .collection("orders")
+        .where("placedBy", isEqualTo: Authentication.userID)
+        .snapshots()
+        .map((querySnap) => querySnap.docs.map((queryDocSnap) {
+              final orderData = queryDocSnap.data();
+              print(orderData);
+              return Order.fromData(
+                orderData: orderData,
+                id: queryDocSnap.id,
+              );
+            }).toList());
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> data() {
+    return firestoreInstance.collection("orders").snapshots();
+  }
+
+  static int totalOrder() {
+    return 1;
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> carDetailsStream(
+      String carID) {
+    return firestoreInstance.collection("cars").doc(carID).snapshots();
   }
 }

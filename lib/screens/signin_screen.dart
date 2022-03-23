@@ -56,6 +56,8 @@ class _SigninState extends State<Signin> {
       top: false,
       child: Scaffold(
         // backgroundColor: Color(0xff264653),
+        // backgroundColor: const Color(0xff2ECC71),
+
         backgroundColor: Colors.white,
         // backgroundColor: const Color(0xff33CEA2),
         body: Padding(
@@ -69,8 +71,11 @@ class _SigninState extends State<Signin> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Car Rental",
-                style: kAppName.copyWith(fontSize: 90),
+                "EV  Rental",
+                style: kAppName.copyWith(
+                  fontSize: 100,
+                  // fontFamily: "Bungee",
+                ),
               ),
               SizedBox(
                 height: size.height * 0.03,
@@ -158,6 +163,7 @@ class _SigninState extends State<Signin> {
                                   style: kButtonContentTextStye,
                                 ),
                                 width: size.width * 0.75,
+                                // buttonColor: const Color(0xff2ECC71),
                               ),
                               //   ],
                               // ),

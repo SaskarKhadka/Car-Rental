@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(
               left: 30.0,
               right: 20.0,
-              top: 50.0,
+              top: 70.0,
               bottom: 25.0,
             ),
             child: Column(
@@ -174,6 +174,17 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text(
+                  "Welcome back,",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Montserrat",
+                    fontSize: 35.0,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xffECECEC),
+                    letterSpacing: 1.5,
+                  ),
+                ),
                 const Center(
                   child: Image(
                     image: AssetImage('images/vector.png'),
@@ -184,17 +195,7 @@ class _HomePageState extends State<HomePage> {
                 // const SizedBox(
                 //   height: 15.0,
                 // ),
-                const Text(
-                  "Welcome back,",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: "Montserrat",
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xffECECEC),
-                    letterSpacing: 1.5,
-                  ),
-                ),
+
                 const SizedBox(
                   height: 30.0,
                 ),

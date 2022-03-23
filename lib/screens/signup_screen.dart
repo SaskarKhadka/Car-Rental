@@ -52,7 +52,9 @@ class _SignupState extends State<Signup> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        // backgroundColor: Color(0xff264653),
+        // backgroundColor: const Color(0xff264653),
+        // backgroundColor: const Color(0xff2ECC71),
+        // backgroundColor: const Color(0xff201A31),
         backgroundColor: Colors.white,
         // backgroundColor: const Color(0xff33CEA2),
         body: Padding(
@@ -66,11 +68,14 @@ class _SignupState extends State<Signup> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Car Rental",
-                style: kAppName.copyWith(fontSize: 90),
+                "EV Rental",
+                style: kAppName.copyWith(
+                  fontSize: 90,
+                  // fontFamily: "Bungee",
+                ),
               ),
               // SizedBox(
-              //   height: size.height * 0.0,
+              //   height: size.height * 0.01,
               // ),
               Expanded(
                   child: ScrollConfiguration(

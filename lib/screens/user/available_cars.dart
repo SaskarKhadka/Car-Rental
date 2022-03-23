@@ -6,6 +6,7 @@ import 'package:car_rental/screens/admin/edit_car.dart';
 import 'package:car_rental/screens/admin/tab_pages/cars.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/payment_screen.dart';
+import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:flutter/material.dart';
 
@@ -45,71 +46,6 @@ class AvailableCars extends StatelessWidget {
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
-          actions: [
-            const Padding(
-              padding: EdgeInsets.only(
-                top: 8.0,
-                left: 20.0,
-                right: 15.0,
-              ),
-            ),
-            Theme(
-              data: Theme.of(context).copyWith(
-                  textTheme: const TextTheme().apply(bodyColor: Colors.black),
-                  dividerColor: Colors.black,
-                  iconTheme: const IconThemeData(color: Colors.white)),
-              child: PopupMenuButton<int>(
-                color: Colors.white,
-                itemBuilder: (BuildContext context) => [
-                  const PopupMenuItem<int>(
-                    value: 0,
-                    child: Text(
-                      "About us",
-                      style: TextStyle(
-                        fontFamily: "Montserrat",
-                        color: Colors.black,
-                        letterSpacing: 1.8,
-                      ),
-                    ),
-                  ),
-                  const PopupMenuItem<int>(
-                      value: 1,
-                      child: Text(
-                        "Help",
-                        style: TextStyle(
-                          fontFamily: "Montserrat",
-                          color: Colors.black,
-                          letterSpacing: 1.8,
-                        ),
-                      )),
-                  const PopupMenuDivider(),
-                  PopupMenuItem<int>(
-                      value: 2,
-                      child: Row(
-                        children: const [
-                          Icon(
-                            Icons.logout,
-                            color: Colors.red,
-                          ),
-                          SizedBox(
-                            width: 7,
-                          ),
-                          Text(
-                            "Sign Out",
-                            style: TextStyle(
-                              fontFamily: "Montserrat",
-                              color: Colors.black,
-                              letterSpacing: 1.8,
-                            ),
-                          )
-                        ],
-                      )),
-                ],
-                onSelected: (item) => selectedItem(context, item),
-                offset: const Offset(0, 70),
-              ),
-            ),
-          ],
         ),
         body: Scrollbar(
           child: AvailableCarsStream(
@@ -248,7 +184,15 @@ class AvailableCarsStream extends StatelessWidget {
                                     showDialog(
                                         context: context,
                                         builder: (context) =>
-                                            const CarDetailsDialog());
+                                            const CarDetailsDialog(
+                                              brand: "brand",
+                                              type: "type",
+                                              totalSeats: "totalSeats",
+                                              mileage: "mileage",
+                                              registrationNumber:
+                                                  "registrationNumber",
+                                              ratePerDay: "ratePerDay",
+                                            ));
                                   },
                                   child: Container(
                                     height: 35,
@@ -277,6 +221,9 @@ class AvailableCarsStream extends StatelessWidget {
                                 child: InkWell(
                                   onTap: () async {
                                     args!["car"] = car.docID;
+                                    args!["placedBy"] = Authentication.userID;
+                                    args!["timestamp"] =
+                                        DateTime.now().toString();
                                     navigatorKey.currentState!
                                         .pushNamed(Payment.id, arguments: args);
                                   },

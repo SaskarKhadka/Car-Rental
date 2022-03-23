@@ -195,8 +195,10 @@ class _PaymentState extends State<Payment> {
                                               );
                                               //TODO:See about paid amoount
                                               widget.args!["paidAmount"] = "10";
-                                              widget.args!["user"] =
-                                                  Authentication.userID;
+                                              print(Authentication.userID);
+                                              // widget.args!["user"] =
+                                              //     Authentication.userID;
+
                                               Database.placeOrder(widget.args!);
                                               navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();
