@@ -3,11 +3,13 @@ class User {
   late String id;
   late String email;
   late String phoneNumber;
+  late String profileUrl;
 
   User.fromData({required Map<String, dynamic> userData, required this.id}) {
     name = userData["name"];
     email = userData["email"];
     phoneNumber = userData["phoneNumber"];
+    profileUrl = userData["profileUrl"];
   }
 
   User({

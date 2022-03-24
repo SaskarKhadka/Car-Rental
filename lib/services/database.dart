@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
 import 'package:car_rental/model/user.dart';
 import 'package:car_rental/services/authentication.dart';
+import 'package:car_rental/services/cloudStorage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Database {
@@ -11,6 +13,7 @@ class Database {
   static Future<void> addUser(Map<String, dynamic> userData) async {
     final userRef = firestoreInstance.collection("users").doc();
     userData["id"] = Authentication.userID;
+    userData["profileUrl"] = await CloudStorage.genericProfileUrl();
     await userRef.set(userData);
   }
 
@@ -134,18 +137,12 @@ class Database {
             }).toList());
   }
 
-  static placeOrder(Map<String, dynamic> orderDetails) async {
-    final orderRef = firestoreInstance.collection("orders").doc();
-    await orderRef.set(orderDetails);
-  }
+  // static placeOrder(Map<String, dynamic> orderDetails) async {
+  //   final orderRef = firestoreInstance.collection("orders").doc();
+  //   await orderRef.set(orderDetails);
+  // }
 
-  static Stream<List<Order?>> ordersStream() {
-    // firestoreInstance.collection("orders").snapshots().forEach((element) {
-    //   final data = element.docs;
-    //   for (final value in data) {
-    //     print(value.data());
-    //   }
-    // });
+  static Stream<List<Order?>> userOrdersStream() {
     return firestoreInstance
         .collection("orders")
         .where("placedBy", isEqualTo: Authentication.userID)
@@ -162,16 +159,140 @@ class Database {
             }).toList());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> data() {
-    return firestoreInstance.collection("orders").snapshots();
+  static Stream<List<Order?>> allOrders() {
+    return firestoreInstance
+        .collection("orders")
+        .snapshots()
+        .map((querySnap) => querySnap.docs.map((queryDocSnap) {
+              final orderData = queryDocSnap.data();
+              // print(orderData);
+              return Order.fromData(
+                orderData: orderData,
+                id: queryDocSnap.id,
+              );
+            }).toList());
   }
 
-  static int totalOrder() {
-    return 1;
+  static Future<int> totalOrder(String? userID) async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where(
+          "id",
+          isEqualTo: userID,
+        )
+        .get();
+    final userDocSnap = userQuerySnap.docs[0];
+    return userDocSnap.data()["totalOrder"] ?? 0;
   }
+
+  // static updateOrderNumber(int? by) async {
+  //   final totalOrders = await totalOrder();
+  //   final userRef = firestoreInstance
+  //       .collection("users")
+  //       .where("id", isEqualTo: Authentication.userID)
+  //       .get();
+  // }
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> carDetailsStream(
       String carID) {
     return firestoreInstance.collection("cars").doc(carID).snapshots();
+  }
+
+  static updateProfileUrl(String? url) async {
+    final querySnap = await firestoreInstance
+        .collection("users")
+        .where("id", isEqualTo: Authentication.userID)
+        .get();
+    final userDocID = querySnap.docs[0].id;
+    await firestoreInstance
+        .collection("users")
+        .doc(userDocID)
+        .update({"profileUrl": url!});
+  }
+
+  static Stream<List<User?>> getUser(String? uid) {
+    return firestoreInstance
+        .collection("users")
+        .where("id", isEqualTo: uid)
+        .snapshots()
+        .map((querySnap) => querySnap.docs.map((queryDocSnap) {
+              final userData = queryDocSnap.data();
+              return User.fromData(
+                userData: userData,
+                id: queryDocSnap.id,
+              );
+            }).toList());
+  }
+
+  static orderPlacingTransaction(Map<String, dynamic> orderDetails) async {
+    try {
+      final orderRef = firestoreInstance.collection("orders").doc();
+      final user = await firestoreInstance
+          .collection("users")
+          .where("id", isEqualTo: orderDetails["placedBy"])
+          .get();
+      final userRef =
+          firestoreInstance.collection("users").doc(user.docs[0].id);
+      final carRef =
+          firestoreInstance.collection("cars").doc(orderDetails["car"]);
+      final totalOrders = await totalOrder(Authentication.userID);
+
+      await firestoreInstance.runTransaction((transaction) async {
+        transaction.set(orderRef, orderDetails);
+
+        transaction.update(carRef, {
+          "availability.${orderRef.id}": {
+            "pickUpDate": orderDetails["pickUpDate"],
+            "dropOffDate": orderDetails["dropOffDate"]
+          }
+        });
+        transaction.update(userRef, {
+          "totalOrder": totalOrders + 1,
+        });
+      });
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.message!);
+    } on RangeError catch (ex) {
+      throw CustomException(ex.message);
+    } on SocketException catch (ex) {
+      throw CustomException(ex.message);
+    }
+  }
+
+  static orderDeleteTransaction(
+    String? orderID,
+    String? carID,
+    String? userID,
+  ) async {
+    try {
+      final orderRef = firestoreInstance.collection("orders").doc(orderID);
+      final user = await firestoreInstance
+          .collection("users")
+          .where("id", isEqualTo: userID)
+          .get();
+      final userRef =
+          firestoreInstance.collection("users").doc(user.docs[0].id);
+      final carRef = firestoreInstance.collection("cars").doc(carID);
+      final carDocSnap = await carRef.get();
+      final carAvailability =
+          carDocSnap.data()!["availability"] as Map<String, dynamic>;
+      carAvailability.remove(orderRef.id);
+      final totalOrders = await totalOrder(userID);
+
+      await firestoreInstance.runTransaction((transaction) async {
+        transaction.delete(orderRef);
+
+        transaction.update(carRef, {"availability": carAvailability});
+        transaction.update(userRef, {
+          "totalOrder": totalOrders - 1,
+        });
+      });
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.message!);
+    } on RangeError catch (ex) {
+      throw CustomException(ex.message);
+    } on SocketException catch (ex) {
+      throw CustomException(ex.message);
+    }
   }
 }

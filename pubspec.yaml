@@ -38,6 +38,9 @@ dependencies:
   fluttertoast: ^8.0.9
   khalti: ^1.0.2
   google_sign_in: ^5.2.4
+  firebase_storage: ^10.2.9
+  image_picker: ^0.8.4+11
+  image_cropper: ^1.5.0
 
 
 

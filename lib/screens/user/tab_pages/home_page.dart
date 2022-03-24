@@ -265,6 +265,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     onTap: () async {
+                      // Authentication.signOut();
                       _pickDate(context, false);
                     },
                   ),

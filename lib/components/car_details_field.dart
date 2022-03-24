@@ -17,7 +17,7 @@ class CarDetailsCustomTextField extends StatelessWidget {
   }) : super(key: key);
 
   String? validate(String? username) {
-    if (username!.isEmpty) {
+    if (username!.trim().isEmpty) {
       return "Required";
     } else {
       return null;
@@ -32,9 +32,9 @@ class CarDetailsCustomTextField extends StatelessWidget {
   }
 
   String? validateSeatsAndRate(String? value) {
-    if (value!.isEmpty) {
+    if (value!.trim().isEmpty) {
       return "Required";
-    } else if (isNumeric(value)) {
+    } else if (isNumeric(value.trim())) {
       return null;
     } else {
       return "Invalid value";

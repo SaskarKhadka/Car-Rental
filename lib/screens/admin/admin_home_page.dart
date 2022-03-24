@@ -3,7 +3,7 @@ import 'package:car_rental/screens/admin/tab_pages/cars.dart';
 import 'package:car_rental/screens/admin/tab_pages/history.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'tab_pages/requests_page.dart';
+import 'tab_pages/orders.dart';
 
 class AdminHomePage extends StatefulWidget {
   static const id = '/AdminHomePage';
@@ -38,14 +38,15 @@ class _AdminHomePageState extends State<AdminHomePage>
         // dragStartBehavior: DragStartBehavior.down,
         controller: tabController,
         children: [
-          Requests(),
+          const Orders(),
           Cars(),
           History(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: const Color(0xffd17842),
+        // selectedItemColor: const Color(0xffd17842),
+        selectedItemColor: Colors.white,
         unselectedItemColor: const Color(0xff4d4f52),
         showSelectedLabels: true,
         showUnselectedLabels: false,

@@ -1,5 +1,6 @@
 import 'package:car_rental/components/car_details_dialog.dart';
 import 'package:car_rental/components/continue_dialog.dart';
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/screens/admin/edit_car.dart';
@@ -221,56 +222,59 @@ class AvailableCarsStream extends StatelessWidget {
                                 child: InkWell(
                                   onTap: () async {
                                     await showDialog(
-                                        context: context,
-                                        builder: (context) => continueDialog(
-                                              title: "Place Order",
+                                      context: context,
+                                      builder: (context) => continueDialog(
+                                        title: "Place Order",
+                                        message:
+                                            "Are you sure you want to continue?",
+                                        onYes: () async {
+                                          navigatorKey.currentState!.pop();
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: const [
+                                                CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  backgroundColor: Colors.black,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                          args!["car"] = car.docID;
+                                          args!["placedBy"] =
+                                              Authentication.userID;
+                                          args!["timestamp"] =
+                                              DateTime.now().toString();
+                                          // await Database.placeOrder(
+                                          //     args!);
+                                          try {
+                                            await Database
+                                                .orderPlacingTransaction(args!);
+                                          } on CustomException catch (ex) {
+                                            navigatorKey.currentState!.pop();
+                                            navigatorKey.currentState!.pop();
+                                            return getToast(
                                               message:
-                                                  "Are you sure you want to continue?",
-                                              onYes: () async {
-                                                navigatorKey.currentState!
-                                                    .pop();
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) => Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: const [
-                                                      CircularProgressIndicator(
-                                                        color: Colors.white,
-                                                        backgroundColor:
-                                                            Colors.black,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                                args!["car"] = car.docID;
-                                                args!["placedBy"] =
-                                                    Authentication.userID;
-                                                args!["timestamp"] =
-                                                    DateTime.now().toString();
-                                                await Database.placeOrder(
-                                                    args!);
-                                                navigatorKey.currentState!
-                                                    .pop();
-                                                navigatorKey.currentState!
-                                                    .pop();
-                                                getToast(
-                                                  message:
-                                                      "Your order has been placed",
-                                                  color: Colors.green,
-                                                );
-                                              },
-                                              onNo: () {
-                                                navigatorKey.currentState!
-                                                    .pop();
-                                              },
-                                            ));
-
-                                    // navigatorKey.currentState!
-                                    //     .pushNamed(Payment.id, arguments: args);
+                                                  "Your order couldnot be placed",
+                                              color: Colors.red,
+                                            );
+                                          }
+                                          navigatorKey.currentState!.pop();
+                                          navigatorKey.currentState!.pop();
+                                          getToast(
+                                            message:
+                                                "Your order has been placed",
+                                            color: Colors.green,
+                                          );
+                                        },
+                                        onNo: () {
+                                          navigatorKey.currentState!.pop();
+                                        },
+                                      ),
+                                    );
                                   },
                                   child: Container(
                                     height: 35,

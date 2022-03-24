@@ -25,7 +25,7 @@ class CustomTextField extends StatelessWidget {
   }) : super(key: key);
 
   String? validate(String? username) {
-    if (username!.isEmpty) {
+    if (username!.trim().isEmpty) {
       return "Required";
     } else {
       return null;
@@ -40,9 +40,9 @@ class CustomTextField extends StatelessWidget {
   }
 
   String? validatePhoneNumber(String? value) {
-    if (value!.isEmpty) {
+    if (value!.trim().isEmpty) {
       return "Required";
-    } else if (value.length != 10 || !isNumeric(value)) {
+    } else if (value.trim().length != 10 || !isNumeric(value.trim())) {
       return "Invalid phone number";
     } else {
       return null;
@@ -50,9 +50,9 @@ class CustomTextField extends StatelessWidget {
   }
 
   String? validatePin(String? value) {
-    if (value!.isEmpty) {
+    if (value!.trim().isEmpty) {
       return "Required";
-    } else if (value.length != 4 || !isNumeric(value)) {
+    } else if (value.trim().length != 4 || !isNumeric(value.trim())) {
       return "Invalid transaction pin";
     } else {
       return null;
@@ -60,9 +60,9 @@ class CustomTextField extends StatelessWidget {
   }
 
   String? validateAmount(String? value) {
-    if (value!.isEmpty) {
+    if (value!.trim().isEmpty) {
       return "Required";
-    } else if (!isNumeric(value)) {
+    } else if (!isNumeric(value.trim())) {
       return "Invalid Amount";
     } else {
       return null;
@@ -70,11 +70,11 @@ class CustomTextField extends StatelessWidget {
   }
 
   String? validateEmail(String? email) {
-    if (email!.isEmpty) {
+    if (email!.trim().isEmpty) {
       return "Required";
     } else if (!RegExp(
             r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
-        .hasMatch(email)) {
+        .hasMatch(email.trim())) {
       return "Email not valid";
     } else {
       return null;

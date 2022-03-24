@@ -47,6 +47,7 @@ class _UserHomePageState extends State<UserHomePage>
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
+        // backgroundColor: const Color(0xff22232C),
         // selectedItemColor: const Color(0xffd17842),
         selectedItemColor: Colors.white,
         unselectedItemColor: const Color(0xff4d4f52),
@@ -55,7 +56,7 @@ class _UserHomePageState extends State<UserHomePage>
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Requests"),
           BottomNavigationBarItem(
-              icon: Icon(EvaIcons.carOutline), label: "Cars"),
+              icon: Icon(EvaIcons.carOutline), label: "Orders"),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.personOutline), label: "Profile"),
         ],

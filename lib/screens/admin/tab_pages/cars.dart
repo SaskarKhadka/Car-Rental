@@ -164,7 +164,8 @@ class Cars extends StatelessWidget {
             // Navigator.pushNamed(context, AddNewCar.id);
             navigatorKey.currentState!.pushNamed(AddNewCar.id);
           },
-          backgroundColor: const Color(0xffd17842),
+          // backgroundColor: const Color(0xffd17842),
+          backgroundColor: Colors.blue,
           child: const Icon(
             EvaIcons.plus,
             color: Colors.black,
