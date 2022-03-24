@@ -6,6 +6,7 @@ import 'package:car_rental/model/order.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
+import 'package:car_rental/services/google_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,9 @@ class UserOrdersStream extends StatelessWidget {
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: Database.data(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          // print(snapshot.data!.docs);
+          // sabbai order lyara filter garirako xum
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Text(
                 'You have no orders',
@@ -267,6 +270,9 @@ class UserOrdersStream extends StatelessWidget {
                                       todaysDate[2] >= int.parse(pickUpDate[2]))
                               ? iconButton(
                                   onTap: () {
+                                    GoogleAuthentication.googleSignIn
+                                        .disconnect();
+                                    Authentication.signOut();
                                     // do something
                                   },
                                   color: const Color.fromARGB(255, 89, 180, 66),

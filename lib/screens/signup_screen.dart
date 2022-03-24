@@ -139,7 +139,7 @@ class _SignupState extends State<Signup> {
                                 icon: EvaIcons.lockOutline,
                               ),
                               SizedBox(
-                                height: size.height * 0.09,
+                                height: size.height * 0.07,
                               ),
                               CustomButton(
                                 onPressed: () async {
@@ -176,9 +176,6 @@ class _SignupState extends State<Signup> {
                                       print(ex.toString());
                                     }
                                   }
-
-                                  // setState(() {});
-                                  // }
                                 },
                                 buttonContent: const Text(
                                   "REGISTER",
@@ -187,7 +184,7 @@ class _SignupState extends State<Signup> {
                                 width: size.width * 0.75,
                               ),
                               const SizedBox(
-                                height: 50.0,
+                                height: 40.0,
                               ),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

@@ -20,7 +20,6 @@ class Authentication {
           email: userData["email"], password: password);
       await Database.addUser(userData);
     } on FirebaseAuthException catch (ex) {
-      // throw error
       throw CustomException(ex.message!);
     }
   }

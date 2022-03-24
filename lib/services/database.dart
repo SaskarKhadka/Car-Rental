@@ -10,10 +10,15 @@ class Database {
 
   static Future<void> addUser(Map<String, dynamic> userData) async {
     final userRef = firestoreInstance.collection("users").doc();
-    // final user =
-    //     User.fromData(userData: userData, id: Authentication.userID).toJson;
     userData["id"] = Authentication.userID;
     await userRef.set(userData);
+  }
+
+  static Future<bool> userExists(String? uid) async {
+    final query =
+        firestoreInstance.collection("users").where("id", isEqualTo: uid!);
+    final document = await query.get();
+    return document.docs.isNotEmpty;
   }
 
   static Future<bool> isAdmin() async {

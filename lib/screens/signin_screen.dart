@@ -5,6 +5,7 @@ import 'package:car_rental/screens/user/tab_pages/home_page.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
+import 'package:car_rental/services/google_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_password_field.dart';
@@ -168,7 +169,72 @@ class _SigninState extends State<Signin> {
                               //   ],
                               // ),
                               const SizedBox(
-                                height: 70.0,
+                                height: 15.0,
+                              ),
+                              const Center(
+                                child: Text(
+                                  "OR",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontFamily: "Montserrat",
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15.0,
+                              ),
+                              CustomButton(
+                                onPressed: () async {
+                                  //TODO: write validation for phone number
+                                  final googleAccount =
+                                      await GoogleAuthentication
+                                          .selectAccount();
+                                  if (googleAccount == null) return;
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const WaitingDialog(
+                                        title: "Authenticating"),
+                                  );
+                                  try {
+                                    await GoogleAuthentication.signIn(
+                                        googleAccount);
+                                    navigatorKey.currentState!.pop();
+                                    navigatorKey.currentState!
+                                        .pushNamed(UserHomePage.id);
+                                    getToast(
+                                        message: "Login successful",
+                                        color: Colors.green);
+                                  } on Exception catch (ex) {
+                                    navigatorKey.currentState!.pop();
+                                    getToast(
+                                        message: "Account already exists",
+                                        color: Colors.red);
+                                    print(ex.toString());
+                                  }
+                                },
+                                buttonColor: Colors.white,
+                                border: true,
+                                buttonContent: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "images/googleicon.png",
+                                      height: 35,
+                                    ),
+                                    const SizedBox(
+                                      width: 10.0,
+                                    ),
+                                    Text(
+                                      "Sign up with Google",
+                                      style: kButtonContentTextStye.copyWith(
+                                          color: Colors.blue),
+                                    ),
+                                  ],
+                                ),
+                                width: size.width * 0.75,
+                              ),
+                              const SizedBox(
+                                height: 50.0,
                               ),
                             ],
                           ),
