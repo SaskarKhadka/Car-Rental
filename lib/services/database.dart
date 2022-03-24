@@ -6,6 +6,7 @@ import 'package:car_rental/model/user.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/cloudStorage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Database {
   static final firestoreInstance = FirebaseFirestore.instance;
@@ -45,7 +46,6 @@ class Database {
 
   static saveCar(Map<String, dynamic> carData) async {
     final carRef = firestoreInstance.collection("cars").doc();
-    // final user = Car.fromData(carData: carData).toJson;
     await carRef.set(carData);
   }
 
@@ -55,17 +55,15 @@ class Database {
   }
 
   static Stream<List<Car?>> carsStream() {
-    return firestoreInstance
-        .collection("cars")
-        .snapshots()
-        .map((querySnap) => querySnap.docs
-            .map(
-              (queryDocSnap) => Car.fromData(
-                carData: queryDocSnap.data(),
-                id: queryDocSnap.id,
-              ),
-            )
-            .toList());
+    final carsSnapshot = firestoreInstance.collection("cars").snapshots();
+    return carsSnapshot.map((querySnap) => querySnap.docs
+        .map(
+          (queryDocSnap) => Car.fromData(
+            carData: queryDocSnap.data(),
+            id: queryDocSnap.id,
+          ),
+        )
+        .toList());
   }
 
   static Future<void> deleteCar({String? id}) async {
@@ -295,4 +293,20 @@ class Database {
       throw CustomException(ex.message);
     }
   }
+
+  // static addCarTransaction(
+  //     List<XFile?> files, Map<String, dynamic> carData) async {
+  //   final carRef = firestoreInstance.collection("cars").doc();
+  //   try {
+
+  //       transaction.set(carRef, carData);
+  //     });
+  //   } on FirebaseException catch (ex) {
+  //     throw CustomException(ex.message!);
+  //   } on RangeError catch (ex) {
+  //     throw CustomException(ex.message);
+  //   } on SocketException catch (ex) {
+  //     throw CustomException(ex.message);
+  //   }
+  // }
 }

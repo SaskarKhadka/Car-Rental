@@ -9,7 +9,7 @@ class CloudStorage {
   static final instance = FirebaseStorage.instance;
 
   //uploads file in firebase storage
-  static Future<bool> uploadFile(File image) async {
+  static Future<bool> uploadProfilePicture(File image) async {
     final ref = instance.ref('profilePics/$userID');
     try {
       ListResult listResult;
@@ -39,8 +39,8 @@ class CloudStorage {
       } catch (ex) {
         return false;
       }
-    } on FirebaseException catch (e) {
-      print(e.code);
+    } on FirebaseException catch (ex) {
+      print(ex.code);
       return false;
     }
   }
@@ -57,5 +57,23 @@ class CloudStorage {
 
   static Future<String> genericProfileUrl() async {
     return await instance.ref("genericprofile/profile.jpg").getDownloadURL();
+  }
+
+  static Future<String> uploadCarPic(File image, String? regNo) async {
+    String dateTime = DateTime.now()
+        .toString()
+        .replaceAll('.', '')
+        .replaceAll(':', '')
+        .replaceAll('-', '')
+        .replaceAll(' ', '');
+    final ref = instance.ref('carPics/$regNo').child(dateTime);
+
+    try {
+      await ref.putFile(image);
+      String url = await ref.getDownloadURL();
+      return url;
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.message!);
+    }
   }
 }

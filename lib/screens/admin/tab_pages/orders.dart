@@ -73,8 +73,7 @@ class UserOrdersStream extends StatelessWidget {
         stream: Database.allOrders(),
         builder: (context, snapshot) {
           // print(snapshot.data!.docs);
-          // sabbai order lyara filter garirako xum
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Text(
                 'You have no orders',
@@ -86,6 +85,7 @@ class UserOrdersStream extends StatelessWidget {
             );
           }
           final orders = snapshot.data!;
+          print(orders);
           return ListView.builder(
             shrinkWrap: true,
             itemCount: orders.length,

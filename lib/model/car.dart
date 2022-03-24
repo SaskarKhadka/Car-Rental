@@ -6,6 +6,8 @@ class Car {
   late String mileage;
   late String ratePerDay;
   late String registrationNumber;
+  late String coverPicUrl;
+  late List picsUrl;
 
   Car.fromData({required Map<String, dynamic> carData, required String? id}) {
     docID = id!;
@@ -15,6 +17,8 @@ class Car {
     mileage = carData["mileage"];
     ratePerDay = carData["ratePerDay"];
     registrationNumber = carData["registrationNumber"];
+    coverPicUrl = carData["coverPicUrl"];
+    picsUrl = carData["picsUrl"];
   }
 
   Car({
@@ -25,6 +29,8 @@ class Car {
     required this.mileage,
     required this.ratePerDay,
     required this.registrationNumber,
+    required this.coverPicUrl,
+    required this.picsUrl,
   });
 
   Map<String, dynamic> get toJson => {
@@ -35,5 +41,7 @@ class Car {
         "mileage": mileage,
         "ratePerDay": ratePerDay,
         "registrationNumber": registrationNumber,
+        "coverPicUrl": coverPicUrl,
+        "picsUrl": picsUrl,
       };
 }

@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/waiting_dialog.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/signin_screen.dart';
+import 'package:car_rental/services/cloudStorage.dart';
 import 'package:car_rental/services/database.dart';
+import 'package:car_rental/state/car_pics_state.dart';
 import 'package:car_rental/state/car_state.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/car_details_field.dart';
@@ -128,18 +133,73 @@ class _AddNewCarState extends State<AddNewCar> {
                     labelText: "Registration Number",
                     icon: EvaIcons.carOutline),
                 const SizedBox(
-                  height: 50.0,
+                  height: 30.0,
                 ),
+                CustomButton(
+                  onPressed: () async {
+                    try {
+                      final imgPicker = ImagePicker();
+                      final pickedFiles = await imgPicker.pickMultiImage();
 
+                      if (pickedFiles!.isEmpty) return;
+
+                      Provider.of<CarPicsState>(context, listen: false)
+                          .changeState(pickedFiles);
+                    } catch (e) {
+                      print(e);
+                      // colourController.changeColour(Colors.white54);
+                    }
+                  },
+                  width: double.infinity,
+                  buttonContent: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          EvaIcons.uploadOutline,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 20.0,
+                        ),
+                        Text(
+                          "UPLOAD PICS",
+                          style: kButtonContentTextStye,
+                        ),
+                      ]),
+                ),
+                const SizedBox(
+                  height: 25.0,
+                ),
                 CustomButton(
                   onPressed: () async {
                     if (globalKey.currentState!.validate()) {
+                      final files =
+                          Provider.of<CarPicsState>(context, listen: false)
+                              .carPics;
+                      if (files.isEmpty) {
+                        return getToast(
+                          message: "No pictures are slected",
+                          color: Colors.red,
+                        );
+                      }
+
                       showDialog(
                         context: context,
                         builder: (context) =>
                             const WaitingDialog(title: "Updating"),
                       );
+
                       try {
+                        List<String> picsUrl = [];
+                        for (final xfile in files) {
+                          File? file = File(xfile!.path);
+                          String? url = await CloudStorage.uploadCarPic(
+                            file,
+                            carRegistrationController!.text.trim(),
+                          );
+                          picsUrl.add(url);
+                        }
+                        final coverPicUrl = picsUrl.removeAt(0);
                         await Database.saveCar({
                           "type": carTypeController!.text.trim(),
                           "brand": carBrandController!.text.trim(),
@@ -148,7 +208,8 @@ class _AddNewCarState extends State<AddNewCar> {
                           "ratePerDay": carRateController!.text.trim(),
                           "registrationNumber":
                               carRegistrationController!.text.trim(),
-                          "isAvailable": false,
+                          "coverPicUrl": coverPicUrl,
+                          "picsUrl": picsUrl,
                         });
                         navigatorKey.currentState!.pop();
                         navigatorKey.currentState!.pop();
@@ -157,9 +218,10 @@ class _AddNewCarState extends State<AddNewCar> {
                           color: Colors.green,
                         );
                       } on Exception catch (ex) {
+                        navigatorKey.currentState!.pop();
                         getToast(
                           message: "Car couldnot be added",
-                          color: Colors.green,
+                          color: Colors.red,
                         );
                         print(ex.toString().split(". ")[0] + ".");
                       }
@@ -181,7 +243,7 @@ class _AddNewCarState extends State<AddNewCar> {
                           style: kButtonContentTextStye,
                         ),
                       ]),
-                )
+                ),
               ],
             ),
           ),

@@ -80,7 +80,8 @@ class UserProfile extends StatelessWidget {
                             if (croppedFile == null) return;
 
                             bool uploaded =
-                                await CloudStorage.uploadFile(croppedFile);
+                                await CloudStorage.uploadProfilePicture(
+                                    croppedFile);
 
                             if (uploaded) {
                               getToast(
