@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/admin/admin_home_page.dart';
-import 'package:car_rental/screens/user/tab_pages/home_page.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
 import 'package:car_rental/services/authentication.dart';
@@ -38,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Column(
@@ -49,16 +48,12 @@ class _SplashScreenState extends State<SplashScreen> {
               // height: 50.0,
               height: size.height * 0.3,
             ),
-            Container(
-              // width: size.width * 0.45,
-              color: Colors.black,
-              child: Center(
-                child: Text(
-                  'Car Rental',
-                  style: kAppName.copyWith(
-                    color: Colors.white,
-                    fontSize: 80,
-                  ),
+            Center(
+              child: Text(
+                'EV Rental',
+                style: kAppName.copyWith(
+                  fontFamily: "Bungee",
+                  fontSize: 40,
                 ),
               ),
             ),

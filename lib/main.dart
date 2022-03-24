@@ -39,7 +39,7 @@ class CarRental extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        initialRoute: Signin.id,
+        initialRoute: SplashScreen.id,
         navigatorKey: navigatorKey,
         routes: {
           SplashScreen.id: (context) => const SplashScreen(),

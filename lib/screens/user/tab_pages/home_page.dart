@@ -342,74 +342,20 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                     if (formKey!.currentState!.validate()) {
-                      await showDialog(
-                          context: context,
-                          builder: (context) => continueDialog(
-                                title: "Place Order",
-                                message: "Are you sure you want to continue?",
-                                onYes: () async {
-                                  // Navigator.of(context,
-                                  //         rootNavigator: true)
-                                  //     .pop();
-                                  navigatorKey.currentState!.pop();
-                                  // showDialog(
-                                  //   context: context,
-                                  //   builder: (context) => Column(
-                                  //     mainAxisSize: MainAxisSize.min,
-                                  //     mainAxisAlignment:
-                                  //         MainAxisAlignment.center,
-                                  //     children: const [
-                                  //       CircularProgressIndicator(
-                                  //         color: Colors.white,
-                                  //         backgroundColor: Colors.black,
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // );
-                                  // await Database.placeOrder({
-                                  //   "pickUpDate": Provider.of<DateState>(
-                                  //           context,
-                                  //           listen: false)
-                                  //       .pickUpDate,
-                                  //   "dropOffDate": Provider.of<DateState>(
-                                  //           context,
-                                  //           listen: false)
-                                  //       .dropOffDate,
-                                  //   "pickUpLocation":
-                                  //       pickUpLocationController.text.trim(),
-                                  //   "dropOffLocation":
-                                  //       dropOffLocationController.text.trim(),
-                                  //   "timeStamp": DateTime.now(),
-                                  //   "placedBy": Authentication.userID,
-                                  // });
-
-                                  // navigatorKey.currentState!.pop();
-
-                                  navigatorKey.currentState!
-                                      .pushNamed(AvailableCars.id, arguments: {
-                                    "pickUpDate": Provider.of<DateState>(
-                                            scaffoldKey!.currentContext!,
-                                            listen: false)
-                                        .pickUpDate,
-                                    "dropOffDate": Provider.of<DateState>(
-                                            scaffoldKey!.currentContext!,
-                                            listen: false)
-                                        .dropOffDate,
-                                    "pickUpLocation":
-                                        pickUpLocationController.text.trim(),
-                                    "dropOffLocation":
-                                        dropOffLocationController.text.trim(),
-                                  });
-                                  // Provider.of<DateState>(context, listen: false)
-                                  //                                   .reset();
-                                  // getToast(
-                                  //     message: "Order placed successfully",
-                                  //     color: Colors.green);
-                                },
-                                onNo: () {
-                                  navigatorKey.currentState!.pop();
-                                },
-                              ));
+                      navigatorKey.currentState!
+                          .pushNamed(AvailableCars.id, arguments: {
+                        "pickUpDate": Provider.of<DateState>(
+                                scaffoldKey!.currentContext!,
+                                listen: false)
+                            .pickUpDate,
+                        "dropOffDate": Provider.of<DateState>(
+                                scaffoldKey!.currentContext!,
+                                listen: false)
+                            .dropOffDate,
+                        "pickUpLocation": pickUpLocationController.text.trim(),
+                        "dropOffLocation":
+                            dropOffLocationController.text.trim(),
+                      });
                     }
                   },
                   // color: Colors.red,

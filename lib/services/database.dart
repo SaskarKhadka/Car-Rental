@@ -139,7 +139,7 @@ class Database {
     await orderRef.set(orderDetails);
   }
 
-  static Stream<List<Order>> ordersStream() {
+  static Stream<List<Order?>> ordersStream() {
     // firestoreInstance.collection("orders").snapshots().forEach((element) {
     //   final data = element.docs;
     //   for (final value in data) {
@@ -152,11 +152,13 @@ class Database {
         .snapshots()
         .map((querySnap) => querySnap.docs.map((queryDocSnap) {
               final orderData = queryDocSnap.data();
-              print(orderData);
-              return Order.fromData(
-                orderData: orderData,
-                id: queryDocSnap.id,
-              );
+              // print(orderData);
+              if (orderData["placedBy"] == Authentication.userID) {
+                return Order.fromData(
+                  orderData: orderData,
+                  id: queryDocSnap.id,
+                );
+              }
             }).toList());
   }
 

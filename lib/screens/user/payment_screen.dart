@@ -27,8 +27,19 @@ class Payment extends StatefulWidget {
 class _PaymentState extends State<Payment> {
   final phoneNumberController = TextEditingController();
   final transactionPinController = TextEditingController();
+  final amountController = TextEditingController();
   final otpController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    phoneNumberController.dispose();
+    transactionPinController.dispose();
+    amountController.dispose();
+    otpController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -55,6 +66,16 @@ class _PaymentState extends State<Payment> {
                     key: formKey,
                     child: Column(
                       children: [
+                        CustomTextField(
+                          controller: amountController,
+                          labelText: "Amount",
+                          icon: Icons.payment_outlined,
+                          isAmount: true,
+                          color: const Color(0xff4C276C),
+                        ),
+                        const SizedBox(
+                          height: 25.0,
+                        ),
                         CustomTextField(
                           controller: phoneNumberController,
                           labelText: "Phone Number",
@@ -99,6 +120,7 @@ class _PaymentState extends State<Payment> {
                                 initiationModel =
                                     await Khalti.service.initiatePayment(
                                   request: PaymentInitiationRequestModel(
+                                    //TODO: set amountcontroller
                                     amount: 1000, // in paisa
                                     mobile: phoneNumberController.text.trim(),
                                     transactionPin:
@@ -106,12 +128,6 @@ class _PaymentState extends State<Payment> {
                                     // mobile: "9818897782",
                                     productIdentity: widget.args!["car"],
                                     productName: "Car",
-                                    // additionalData: {
-                                    //   'numberOfSeats':
-                                    //       widget.args!["numberOfSeats"],
-                                    //   'mileage': widget.args!["mileage"],
-                                    //   'rate': widget.args!["rate"],
-                                    // },
                                   ),
                                 );
                               } on FailureHttpResponse catch (ex) {
@@ -193,18 +209,13 @@ class _PaymentState extends State<Payment> {
                                                           .trim(),
                                                 ),
                                               );
-                                              //TODO:See about paid amoount
-                                              widget.args!["paidAmount"] = "10";
-                                              print(Authentication.userID);
-                                              // widget.args!["user"] =
-                                              //     Authentication.userID;
 
-                                              Database.placeOrder(widget.args!);
+                                              navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();
                                               getToast(
                                                 message:
-                                                    "Transaction Successful. Order Placed",
+                                                    "Transaction Successful.",
                                                 color: Colors.green,
                                               );
                                               print(confirmationModel.amount);

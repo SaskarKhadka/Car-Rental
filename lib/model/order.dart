@@ -13,7 +13,7 @@ class Order {
       {required Map<String, dynamic> orderData, required String? id}) {
     docID = id!;
     car = orderData["car"];
-    paidAmount = orderData["paidAmount"];
+    paidAmount = orderData["paidAmount"] ?? "0";
     pickUpDate = orderData["pickUpDate"];
     dropOffDate = orderData["dropOffDate"];
     pickUpLocation = orderData["pickUpLocation"];

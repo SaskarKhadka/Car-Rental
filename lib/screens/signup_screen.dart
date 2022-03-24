@@ -70,8 +70,8 @@ class _SignupState extends State<Signup> {
               Text(
                 "EV Rental",
                 style: kAppName.copyWith(
-                  fontSize: 90,
-                  // fontFamily: "Bungee",
+                  fontSize: 50,
+                  fontFamily: "Bungee",
                 ),
               ),
               // SizedBox(
@@ -83,7 +83,7 @@ class _SignupState extends State<Signup> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                      top: 20.0,
+                      top: 40.0,
                       bottom: 50.0,
                     ),
                     child: Column(

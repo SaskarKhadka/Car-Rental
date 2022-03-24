@@ -4,6 +4,7 @@ import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
 import 'package:car_rental/screens/signin_screen.dart';
+import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/google_auth.dart';
@@ -65,12 +66,12 @@ class UserOrdersStream extends StatelessWidget {
         left: 20.0,
         right: 20.0,
       ),
-      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: Database.data(),
+      child: StreamBuilder<List<Order?>>(
+        stream: Database.ordersStream(),
         builder: (context, snapshot) {
           // print(snapshot.data!.docs);
           // sabbai order lyara filter garirako xum
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          if (!snapshot.hasData) {
             return const Center(
               child: Text(
                 'You have no orders',
@@ -81,18 +82,18 @@ class UserOrdersStream extends StatelessWidget {
               ),
             );
           }
-          final orders = snapshot.data!.docs;
+          final orders = snapshot.data!;
           return ListView.builder(
             shrinkWrap: true,
             itemCount: orders.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              if (orders[index].data()["placedBy"] != Authentication.userID) {
-                return Container();
-              }
-              final orderData = orders[index];
-              final Order? order =
-                  Order.fromData(orderData: orderData.data(), id: orderData.id);
+              // if (orders[index].data()["placedBy"] != Authentication.userID) {
+              //   return Container();
+              // }
+              final order = orders[index];
+              // final Order? order =
+              //     Order.fromData(orderData: orderData, id: orderData.id);
               final todaysDate = [
                 DateTime.now().year,
                 DateTime.now().month,
@@ -270,10 +271,10 @@ class UserOrdersStream extends StatelessWidget {
                                       todaysDate[2] >= int.parse(pickUpDate[2]))
                               ? iconButton(
                                   onTap: () {
-                                    GoogleAuthentication.googleSignIn
-                                        .disconnect();
-                                    Authentication.signOut();
                                     // do something
+                                    navigatorKey.currentState!.pushNamed(
+                                        Payment.id,
+                                        arguments: {"car": order.car});
                                   },
                                   color: const Color.fromARGB(255, 89, 180, 66),
                                   icon: Icons.payment_outlined,

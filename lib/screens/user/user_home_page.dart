@@ -56,7 +56,8 @@ class _UserHomePageState extends State<UserHomePage>
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Requests"),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.carOutline), label: "Cars"),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
+          BottomNavigationBarItem(
+              icon: Icon(EvaIcons.personOutline), label: "Profile"),
         ],
         currentIndex: _selectedIndex,
         onTap: (index) {

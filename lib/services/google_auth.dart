@@ -34,4 +34,8 @@ class GoogleAuthentication {
       throw CustomException(ex.message!);
     }
   }
+
+  static signOut() async {
+    await googleSignIn.disconnect();
+  }
 }

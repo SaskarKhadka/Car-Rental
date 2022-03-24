@@ -220,12 +220,57 @@ class AvailableCarsStream extends StatelessWidget {
                                 padding: const EdgeInsets.only(right: 18.0),
                                 child: InkWell(
                                   onTap: () async {
-                                    args!["car"] = car.docID;
-                                    args!["placedBy"] = Authentication.userID;
-                                    args!["timestamp"] =
-                                        DateTime.now().toString();
-                                    navigatorKey.currentState!
-                                        .pushNamed(Payment.id, arguments: args);
+                                    await showDialog(
+                                        context: context,
+                                        builder: (context) => continueDialog(
+                                              title: "Place Order",
+                                              message:
+                                                  "Are you sure you want to continue?",
+                                              onYes: () async {
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: const [
+                                                      CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                        backgroundColor:
+                                                            Colors.black,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                args!["car"] = car.docID;
+                                                args!["placedBy"] =
+                                                    Authentication.userID;
+                                                args!["timestamp"] =
+                                                    DateTime.now().toString();
+                                                await Database.placeOrder(
+                                                    args!);
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                getToast(
+                                                  message:
+                                                      "Your order has been placed",
+                                                  color: Colors.green,
+                                                );
+                                              },
+                                              onNo: () {
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                              },
+                                            ));
+
+                                    // navigatorKey.currentState!
+                                    //     .pushNamed(Payment.id, arguments: args);
                                   },
                                   child: Container(
                                     height: 35,

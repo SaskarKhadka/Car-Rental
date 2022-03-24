@@ -74,8 +74,8 @@ class _SigninState extends State<Signin> {
               Text(
                 "EV  Rental",
                 style: kAppName.copyWith(
-                  fontSize: 100,
-                  // fontFamily: "Bungee",
+                  fontSize: 50,
+                  fontFamily: "Bungee",
                 ),
               ),
               SizedBox(
@@ -108,7 +108,7 @@ class _SigninState extends State<Signin> {
                           // autovalidateMode: AutovalidateMode.always,
                           child: Column(
                             // mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               CustomTextField(
                                 controller: emailController,
@@ -124,8 +124,21 @@ class _SigninState extends State<Signin> {
                                 labelText: "PASSWORD",
                                 icon: EvaIcons.lockOutline,
                               ),
+                              // const SizedBox(
+                              //   height: 10.0,
+                              // ),
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                      // color: Color(0xffaaabac),
+                                      color: Colors.grey,
+                                      fontFamily: "Montserrat"),
+                                ),
+                              ),
                               SizedBox(
-                                height: size.height * 0.09,
+                                height: size.height * 0.05,
                               ),
                               CustomButton(
                                 onPressed: () async {
@@ -166,8 +179,6 @@ class _SigninState extends State<Signin> {
                                 width: size.width * 0.75,
                                 // buttonColor: const Color(0xff2ECC71),
                               ),
-                              //   ],
-                              // ),
                               const SizedBox(
                                 height: 15.0,
                               ),
@@ -225,7 +236,7 @@ class _SigninState extends State<Signin> {
                                       width: 10.0,
                                     ),
                                     Text(
-                                      "Sign up with Google",
+                                      "Sign in with Google",
                                       style: kButtonContentTextStye.copyWith(
                                           color: Colors.blue),
                                     ),
@@ -234,7 +245,7 @@ class _SigninState extends State<Signin> {
                                 width: size.width * 0.75,
                               ),
                               const SizedBox(
-                                height: 50.0,
+                                height: 40.0,
                               ),
                             ],
                           ),

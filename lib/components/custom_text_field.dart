@@ -10,6 +10,7 @@ class CustomTextField extends StatelessWidget {
   final bool isPhoneNumber;
   final bool isTransactionPin;
   final Color color;
+  final bool isAmount;
 
   const CustomTextField({
     Key? key,
@@ -20,6 +21,7 @@ class CustomTextField extends StatelessWidget {
     this.isPhoneNumber = false,
     this.isTransactionPin = false,
     this.color = Colors.black,
+    this.isAmount = false,
   }) : super(key: key);
 
   String? validate(String? username) {
@@ -57,6 +59,16 @@ class CustomTextField extends StatelessWidget {
     }
   }
 
+  String? validateAmount(String? value) {
+    if (value!.isEmpty) {
+      return "Required";
+    } else if (!isNumeric(value)) {
+      return "Invalid Amount";
+    } else {
+      return null;
+    }
+  }
+
   String? validateEmail(String? email) {
     if (email!.isEmpty) {
       return "Required";
@@ -79,9 +91,11 @@ class CustomTextField extends StatelessWidget {
               ? validatePhoneNumber
               : isTransactionPin
                   ? validatePin
-                  : validate,
+                  : isAmount
+                      ? validateAmount
+                      : validate,
       cursorColor: color,
-      keyboardType: isPhoneNumber || isTransactionPin
+      keyboardType: isPhoneNumber || isTransactionPin || isAmount
           ? TextInputType.number
           : TextInputType.emailAddress,
       decoration: InputDecoration(
