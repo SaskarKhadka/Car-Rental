@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_exception.dart';
+import 'package:car_rental/components/custom_text_field.dart';
+import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/user.dart';
 import 'package:car_rental/screens/signin_screen.dart';
@@ -15,24 +17,41 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class UserProfile extends StatelessWidget {
+class UserProfile extends StatefulWidget {
   const UserProfile({Key? key}) : super(key: key);
 
   @override
+  State<UserProfile> createState() => _UserProfileState();
+}
+
+class _UserProfileState extends State<UserProfile> {
+  final phoneNumberController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print(Authentication.userID);
     return Scaffold(
-      // backgroundColor: Colors.black,
-      backgroundColor: const Color(0xff1B1F2E),
+      backgroundColor: Colors.black,
+      // backgroundColor: const Color(0xff1B1F2E),
       // backgroundColor: const Color(0xff1C223C),
       // backgroundColor: const Color(0xff22232C),
 
       body: StreamBuilder<List<User?>>(
           stream: Database.getUser(Authentication.userID),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              print(snapshot.data);
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
                   CircularProgressIndicator(
                     color: Colors.white,
@@ -41,6 +60,7 @@ class UserProfile extends StatelessWidget {
                 ],
               );
             }
+            print(snapshot.data);
             User? user = snapshot.data![0];
 
             return Padding(
@@ -124,7 +144,8 @@ class UserProfile extends StatelessWidget {
                       onPressed: () {},
                       borderRadius: 20.0,
                       width: double.infinity,
-                      buttonColor: const Color(0xffEEC776),
+                      // buttonColor: const Color(0xffEEC776),
+                      buttonColor: Colors.white,
                       buttonContent: Padding(
                         padding: const EdgeInsets.only(left: 15.0),
                         child: Row(
@@ -157,7 +178,8 @@ class UserProfile extends StatelessWidget {
                       child: CustomButton(
                         borderRadius: 20.0,
                         onPressed: () {},
-                        buttonColor: const Color(0xff8AC186),
+                        // buttonColor: const Color(0xff8AC186),
+                        buttonColor: Colors.white,
                         width: double.infinity,
                         buttonContent: Padding(
                           padding: const EdgeInsets.only(left: 15.0),
@@ -193,11 +215,100 @@ class UserProfile extends StatelessWidget {
                     CustomButton(
                       borderRadius: 20.0,
                       width: double.infinity,
-                      onPressed: () {},
+                      onPressed: () {
+                        // user.phoneNumber == "Phone Number"
+                        //     ?
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Form(
+                                key: formKey,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      "Please enter your phone number",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: "Montserrat",
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 20.0,
+                                    ),
+                                    CustomTextField(
+                                      controller: phoneNumberController,
+                                      labelText: "Phone Number",
+                                      icon: EvaIcons.phoneCallOutline,
+                                      isPhoneNumber: true,
+                                      color: Colors.black,
+                                    ),
+                                    const SizedBox(
+                                      height: 30.0,
+                                    ),
+                                    CustomButton(
+                                      onPressed: () async {
+                                        if (formKey.currentState!.validate()) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: const [
+                                                CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  backgroundColor: Colors.black,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                          try {
+                                            await Database.updatePhoneNumber(
+                                                phoneNumberController.text
+                                                    .trim());
+                                            navigatorKey.currentState!.pop();
+                                            navigatorKey.currentState!.pop();
+                                            getToast(
+                                              message:
+                                                  "Your phone number was updated",
+                                              color: Colors.green,
+                                            );
+                                          } on CustomException catch (ex) {
+                                            navigatorKey.currentState!.pop();
+                                            navigatorKey.currentState!.pop();
+                                            getToast(
+                                              message:
+                                                  "Phone Number couldnot be updated",
+                                              color: Colors.red,
+                                            );
+                                          }
+                                        }
+                                      },
+                                      width: double.infinity,
+                                      buttonColor: Colors.black,
+                                      buttonContent: const Text(
+                                        "PROCEED",
+                                        style: kButtonContentTextStye,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                        // : null;
+                      },
                       // buttonColor: const Color(0xff8969F8),
                       // buttonColor: const Color(0xff8AC186),
                       // buttonColor: const Color(0xff7767D8),
-                      buttonColor: const Color(0xffFFABC7),
+                      // buttonColor: const Color(0xffFFABC7),
+                      buttonColor: Colors.white,
+
                       buttonContent: Padding(
                         padding: const EdgeInsets.only(left: 15.0),
                         child: Row(
@@ -239,6 +350,14 @@ class UserProfile extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: const Color(0xff8969F8),
                         borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.white30,
+                            blurRadius: 10.0,
+                            spreadRadius: 5.0,
+                            // offset: Offset(7, 7),
+                          ),
+                        ],
                       ),
                       child: GestureDetector(
                         onTap: () async {
@@ -268,49 +387,6 @@ class UserProfile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // const SizedBox(
-                    //   width: 15.0,
-                    // ),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(
-                    //     vertical: 15.0,
-                    //     horizontal: 20.0,
-                    //   ),
-                    //   width: MediaQuery.of(context).size.width * 0.35,
-                    //   // height: 50.0,
-                    //   decoration: BoxDecoration(
-                    //     color: const Color(0xff8969F8),
-                    //     borderRadius: BorderRadius.circular(15.0),
-                    //   ),
-                    //   child: GestureDetector(
-                    //     onTap: () async {
-                    //       try {
-                    //         await GoogleAuthentication.signOut();
-                    //         await Authentication.signOut();
-                    //         navigatorKey.currentState!
-                    //             .pushNamedAndRemoveUntil(
-                    //                 Signin.id, (route) => false);
-                    //       } on PlatformException catch (ex) {
-                    //         await Authentication.signOut();
-                    //         navigatorKey.currentState!
-                    //             .pushNamedAndRemoveUntil(
-                    //                 Signin.id, (route) => false);
-                    //       } on CustomException catch (ex) {
-                    //         print(ex);
-                    //       }
-                    //     },
-                    //     child: const Text(
-                    //       "Sign Out",
-                    //       style: TextStyle(
-                    //         color: Colors.black,
-                    //         fontFamily: "Montserrat",
-                    //         fontSize: 20.0,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // ],
-                    // ),
                   ],
                 ),
               ),

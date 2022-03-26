@@ -10,7 +10,7 @@ class GoogleAuthentication {
 
   static final googleSignIn = GoogleSignIn();
 
-  static selectAccount() async {
+  static Future<GoogleSignInAccount?> selectAccount() async {
     final googleAccount = await googleSignIn.signIn();
     return googleAccount;
   }
@@ -22,14 +22,7 @@ class GoogleAuthentication {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      if (!(await Database.userExists(userCredential.user!.uid))) {
-        await Database.addUser({
-          "name": googleAccount.displayName,
-          "email": googleAccount.email,
-        });
-      }
+      await FirebaseAuth.instance.signInWithCredential(credential);
     } on FirebaseAuthException catch (ex) {
       throw CustomException(ex.message!);
     }

@@ -1,11 +1,14 @@
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/components/waiting_dialog.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/admin/admin_home_page.dart';
+import 'package:car_rental/screens/forgot_password.dart';
 import 'package:car_rental/screens/user/tab_pages/home_page.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/google_auth.dart';
+import 'package:car_rental/services/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_password_field.dart';
@@ -15,6 +18,7 @@ import 'package:car_rental/constants/constants.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:car_rental/screens/signup_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Signin extends StatefulWidget {
   static const String id = "/signin";
@@ -124,11 +128,14 @@ class _SigninState extends State<Signin> {
                                 labelText: "PASSWORD",
                                 icon: EvaIcons.lockOutline,
                               ),
-                              // const SizedBox(
-                              //   height: 10.0,
-                              // ),
-                              TextButton(
-                                onPressed: () {},
+                              const SizedBox(
+                                height: 20.0,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  navigatorKey.currentState!
+                                      .pushNamed(ForgotPassword.id);
+                                },
                                 child: const Text(
                                   "Forgot Password?",
                                   style: TextStyle(
@@ -152,6 +159,13 @@ class _SigninState extends State<Signin> {
                                       await Authentication.signIn(
                                           email: emailController.text.trim(),
                                           password: passwordController.text);
+                                      try {
+                                        await NotificationHandler
+                                            .resolveToken();
+                                      } catch (ex) {
+                                        print(ex.toString());
+                                      }
+
                                       final bool isAdmin =
                                           await Database.isAdmin();
                                       navigatorKey.currentState!.pop();
@@ -196,8 +210,7 @@ class _SigninState extends State<Signin> {
                               ),
                               CustomButton(
                                 onPressed: () async {
-                                  //TODO: write validation for phone number
-                                  final googleAccount =
+                                  final GoogleSignInAccount? googleAccount =
                                       await GoogleAuthentication
                                           .selectAccount();
                                   if (googleAccount == null) return;
@@ -206,15 +219,56 @@ class _SigninState extends State<Signin> {
                                     builder: (context) => const WaitingDialog(
                                         title: "Authenticating"),
                                   );
+
                                   try {
                                     await GoogleAuthentication.signIn(
                                         googleAccount);
-                                    navigatorKey.currentState!.pop();
-                                    navigatorKey.currentState!
-                                        .pushNamed(UserHomePage.id);
-                                    getToast(
-                                        message: "Login successful",
-                                        color: Colors.green);
+                                    await NotificationHandler.resolveToken();
+                                    // navigatorKey.currentState!
+                                    //     .pushNamed(UserHomePage.id);
+                                    // getToast(
+                                    //     message: "Login successful",
+                                    //     color: Colors.green);
+                                    try {
+                                      if (!(await Database.userExists(
+                                          GoogleAuthentication
+                                              .currentUser!.uid))) {
+                                        await Database.addUser(
+                                          {
+                                            "name": googleAccount.displayName,
+                                            "email": googleAccount.email,
+                                          },
+                                        );
+                                        navigatorKey.currentState!.pop();
+
+                                        navigatorKey.currentState!
+                                            .pushNamedAndRemoveUntil(
+                                                UserHomePage.id,
+                                                (route) => false);
+                                        getToast(
+                                          message: "Login successful",
+                                          color: Colors.green,
+                                        );
+                                      } else {
+                                        navigatorKey.currentState!.pop();
+
+                                        navigatorKey.currentState!
+                                            .pushNamedAndRemoveUntil(
+                                                UserHomePage.id,
+                                                (route) => false);
+                                        getToast(
+                                          message: "Login successful",
+                                          color: Colors.green,
+                                        );
+                                      }
+                                    } on Exception catch (ex) {
+                                      await Authentication.deleteUser();
+                                      await GoogleAuthentication.signOut();
+                                      return getToast(
+                                        message: "Account couldnot be created",
+                                        color: Colors.red,
+                                      );
+                                    }
                                   } on Exception catch (ex) {
                                     navigatorKey.currentState!.pop();
                                     getToast(

@@ -8,6 +8,7 @@ class Car {
   late String registrationNumber;
   late String coverPicUrl;
   late List picsUrl;
+  late String hideCar;
 
   Car.fromData({required Map<String, dynamic> carData, required String? id}) {
     docID = id!;
@@ -19,6 +20,7 @@ class Car {
     registrationNumber = carData["registrationNumber"];
     coverPicUrl = carData["coverPicUrl"];
     picsUrl = carData["picsUrl"];
+    hideCar = carData["hideCar"];
   }
 
   Car({

@@ -1,6 +1,8 @@
 import 'package:car_rental/components/car_details_dialog.dart';
 import 'package:car_rental/components/continue_dialog.dart';
+import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_exception.dart';
+import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/screens/admin/edit_car.dart';
@@ -9,7 +11,11 @@ import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
+import 'package:car_rental/services/notification.dart';
+import 'package:car_rental/state/image_index_state.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AvailableCars extends StatelessWidget {
   static const String id = "/availableCars";
@@ -114,13 +120,111 @@ class AvailableCarsStream extends StatelessWidget {
                 child: Row(
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16.0),
-                      child: Image.asset(
-                        "images/lambo.jpg",
-                        height: 100.0,
-                        width: 100.0,
-                        fit: BoxFit.fill,
+                    GestureDetector(
+                      onTap: () async {
+                        await Provider.of<ImageIndexState>(context,
+                                listen: false)
+                            .resolveTotalPics(car.docID);
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            // backgroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Provider.of<ImageIndexState>(context,
+                                                  listen: false)
+                                              .changeState(-1);
+                                        },
+                                        child: const Icon(
+                                          EvaIcons.arrowBackOutline,
+                                        ),
+                                      ),
+                                      Image.network(
+                                          car.picsUrl[
+                                              Provider.of<ImageIndexState>(
+                                                      context,
+                                                      listen: true)
+                                                  .imageIndex!],
+                                          height: 200.0,
+                                          width: 200.0,
+                                          fit: BoxFit.fill, loadingBuilder:
+                                              (_, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 30.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              CircularProgressIndicator(
+                                                color: Colors.black,
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                      GestureDetector(
+                                          onTap: () {
+                                            Provider.of<ImageIndexState>(
+                                                    context,
+                                                    listen: false)
+                                                .changeState(1);
+                                          },
+                                          child: const Icon(
+                                              EvaIcons.arrowForwardOutline)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: Image.network(
+                          car.coverPicUrl,
+                          height: 100.0,
+                          width: 100.0,
+                          fit: BoxFit.fill,
+                          loadingBuilder: (_, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return CircularProgressIndicator(
+                              color: Colors.white,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            );
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -181,18 +285,19 @@ class AvailableCarsStream extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(right: 18.0),
                                 child: InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                    // if (phoneNumberExists)
                                     showDialog(
                                         context: context,
-                                        builder: (context) =>
-                                            const CarDetailsDialog(
-                                              brand: "brand",
-                                              type: "type",
-                                              totalSeats: "totalSeats",
-                                              mileage: "mileage",
+                                        builder: (context) => CarDetailsDialog(
+                                              coverPicUrl: car.coverPicUrl,
+                                              brand: car.brand,
+                                              type: car.type,
+                                              numberOfSeats: car.numberOfSeats,
+                                              mileage: car.mileage,
                                               registrationNumber:
-                                                  "registrationNumber",
-                                              ratePerDay: "ratePerDay",
+                                                  car.registrationNumber,
+                                              ratePerDay: car.ratePerDay,
                                             ));
                                   },
                                   child: Container(
@@ -243,32 +348,68 @@ class AvailableCarsStream extends StatelessWidget {
                                               ],
                                             ),
                                           );
-                                          args!["car"] = car.docID;
-                                          args!["placedBy"] =
-                                              Authentication.userID;
-                                          args!["timestamp"] =
-                                              DateTime.now().toString();
-                                          // await Database.placeOrder(
-                                          //     args!);
-                                          try {
-                                            await Database
-                                                .orderPlacingTransaction(args!);
-                                          } on CustomException catch (ex) {
+                                          final bool phoneNumberExists =
+                                              await Database
+                                                  .phoneNumberExists();
+                                          final int totalOrders =
+                                              await Database.totalOrder(
+                                                  Authentication.userID);
+                                          if (totalOrders == 3) {
+                                            navigatorKey.currentState!.pop();
+                                            navigatorKey.currentState!.pop();
+                                            return getToast(
+                                                message:
+                                                    "You can only place 3 orders at a time");
+                                          }
+                                          if (phoneNumberExists) {
+                                            args!["car"] = car.docID;
+                                            args!["placedBy"] =
+                                                Authentication.userID;
+                                            args!["timestamp"] =
+                                                DateTime.now().toString();
+                                            // await Database.placeOrder(
+                                            //     args!);
+                                            try {
+                                              await Database
+                                                  .orderPlacingTransaction(
+                                                      args!);
+                                              navigatorKey.currentState!.pop();
+                                              navigatorKey.currentState!.pop();
+                                              getToast(
+                                                message:
+                                                    "Your order has been placed",
+                                                color: Colors.green,
+                                              );
+                                              try {
+                                                final tokens = await Database
+                                                    .getAdminsToken();
+                                                await NotificationHandler
+                                                    .sendNotification(
+                                                  token: tokens[0]!,
+                                                  body: "You have a new order",
+                                                  title: "New Order",
+                                                );
+                                              } catch (ex) {
+                                                print(ex.toString());
+                                              }
+                                            } on CustomException catch (ex) {
+                                              navigatorKey.currentState!.pop();
+                                              navigatorKey.currentState!.pop();
+                                              return getToast(
+                                                message:
+                                                    "Your order couldnot be placed",
+                                                color: Colors.red,
+                                              );
+                                            }
+                                          } else {
                                             navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
                                             return getToast(
                                               message:
-                                                  "Your order couldnot be placed",
+                                                  "You need to set your phone number.",
                                               color: Colors.red,
                                             );
                                           }
-                                          navigatorKey.currentState!.pop();
-                                          navigatorKey.currentState!.pop();
-                                          getToast(
-                                            message:
-                                                "Your order has been placed",
-                                            color: Colors.green,
-                                          );
                                         },
                                         onNo: () {
                                           navigatorKey.currentState!.pop();

@@ -14,6 +14,7 @@ import 'package:car_rental/services/google_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Orders extends StatelessWidget {
   const Orders({Key? key}) : super(key: key);
@@ -50,6 +51,35 @@ class Orders extends StatelessWidget {
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () async {
+                  try {
+                    await GoogleAuthentication.signOut();
+                    await Authentication.signOut();
+                    navigatorKey.currentState!
+                        .pushNamedAndRemoveUntil(Signin.id, (route) => false);
+                  } on PlatformException catch (ex) {
+                    await Authentication.signOut();
+                    navigatorKey.currentState!
+                        .pushNamedAndRemoveUntil(Signin.id, (route) => false);
+                  } on CustomException catch (ex) {
+                    getToast(
+                      message: "Couldnot sign out",
+                      color: Colors.red,
+                    );
+                  }
+                },
+                child: const Icon(
+                  EvaIcons.logOutOutline,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              ),
+            ),
+          ],
         ),
         body: Scrollbar(
           child: UserOrdersStream(),
@@ -292,9 +322,10 @@ class UserOrdersStream extends StatelessWidget {
                                         carData: snapshot.data!.data()!,
                                         id: order.car);
                                     return CarDetailsDialog(
+                                      coverPicUrl: car.coverPicUrl,
                                       brand: car.brand,
                                       type: car.type,
-                                      totalSeats: car.numberOfSeats,
+                                      numberOfSeats: car.numberOfSeats,
                                       mileage: car.mileage,
                                       registrationNumber:
                                           car.registrationNumber,
@@ -307,13 +338,13 @@ class UserOrdersStream extends StatelessWidget {
                             color: Colors.blue[400],
                             icon: EvaIcons.carOutline,
                           ),
-                          iconButton(
-                            onTap: () {
-                              //do something
-                            },
-                            color: Colors.blue,
-                            icon: EvaIcons.messageCircleOutline,
-                          ),
+                          // iconButton(
+                          //   onTap: () {
+                          //     //do something
+                          //   },
+                          //   color: Colors.blue,
+                          //   icon: EvaIcons.messageCircleOutline,
+                          // ),
                           iconButton(
                             onTap: () async {
                               await showDialog(

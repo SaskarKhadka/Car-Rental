@@ -1,7 +1,9 @@
 import 'package:car_rental/components/car_details_field.dart';
 import 'package:car_rental/components/continue_dialog.dart';
 import 'package:car_rental/components/custom_button.dart';
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/components/custom_text_field.dart';
+import 'package:car_rental/components/scroll_behaviour.dart';
 import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
@@ -10,10 +12,13 @@ import 'package:car_rental/screens/admin/edit_car.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
+import 'package:car_rental/services/google_auth.dart';
 import 'package:car_rental/state/car_state.dart';
+import 'package:car_rental/state/image_index_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 // import 'package:dropdown_button2/dropdown_button2.dart';
 
@@ -94,67 +99,31 @@ class Cars extends StatelessWidget {
           automaticallyImplyLeading: false,
           centerTitle: true,
           actions: [
-            const Padding(
-              padding: EdgeInsets.only(
-                top: 8.0,
-                left: 20.0,
-                right: 15.0,
-              ),
-            ),
-            Theme(
-              data: Theme.of(context).copyWith(
-                  textTheme: const TextTheme().apply(bodyColor: Colors.black),
-                  dividerColor: Colors.black,
-                  iconTheme: const IconThemeData(color: Colors.white)),
-              child: PopupMenuButton<int>(
-                color: Colors.white,
-                itemBuilder: (BuildContext context) => [
-                  const PopupMenuItem<int>(
-                    value: 0,
-                    child: Text(
-                      "About us",
-                      style: TextStyle(
-                        fontFamily: "Montserrat",
-                        color: Colors.black,
-                        letterSpacing: 1.8,
-                      ),
-                    ),
-                  ),
-                  const PopupMenuItem<int>(
-                      value: 1,
-                      child: Text(
-                        "Help",
-                        style: TextStyle(
-                          fontFamily: "Montserrat",
-                          color: Colors.black,
-                          letterSpacing: 1.8,
-                        ),
-                      )),
-                  const PopupMenuDivider(),
-                  PopupMenuItem<int>(
-                      value: 2,
-                      child: Row(
-                        children: const [
-                          Icon(
-                            Icons.logout,
-                            color: Colors.red,
-                          ),
-                          SizedBox(
-                            width: 7,
-                          ),
-                          Text(
-                            "Sign Out",
-                            style: TextStyle(
-                              fontFamily: "Montserrat",
-                              color: Colors.black,
-                              letterSpacing: 1.8,
-                            ),
-                          )
-                        ],
-                      )),
-                ],
-                onSelected: (item) => selectedItem(context, item),
-                offset: const Offset(0, 70),
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () async {
+                  try {
+                    await GoogleAuthentication.signOut();
+                    await Authentication.signOut();
+                    navigatorKey.currentState!
+                        .pushNamedAndRemoveUntil(Signin.id, (route) => false);
+                  } on PlatformException catch (ex) {
+                    await Authentication.signOut();
+                    navigatorKey.currentState!
+                        .pushNamedAndRemoveUntil(Signin.id, (route) => false);
+                  } on CustomException catch (ex) {
+                    getToast(
+                      message: "Couldnot sign out",
+                      color: Colors.red,
+                    );
+                  }
+                },
+                child: const Icon(
+                  EvaIcons.logOutOutline,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
               ),
             ),
           ],
@@ -176,29 +145,6 @@ class Cars extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-Future<void> selectedItem(BuildContext context, int item) async {
-  switch (item) {
-    case 0:
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => AboutPage()),
-      // );
-      break;
-    case 1:
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HelpPage()),
-      // );
-      break;
-    case 2:
-      await Authentication.signOut();
-      // Navigator.pushNamedAndRemoveUntil(context, Signin.id, (route) => false);
-      navigatorKey.currentState!
-          .pushNamedAndRemoveUntil(Signin.id, (route) => false);
-      break;
   }
 }
 
@@ -251,13 +197,111 @@ class CarStream extends StatelessWidget {
                 child: Row(
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16.0),
-                      child: Image.asset(
-                        "images/lambo.jpg",
-                        height: 100.0,
-                        width: 100.0,
-                        fit: BoxFit.fill,
+                    GestureDetector(
+                      onTap: () async {
+                        await Provider.of<ImageIndexState>(context,
+                                listen: false)
+                            .resolveTotalPics(car!.docID);
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            // backgroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Provider.of<ImageIndexState>(context,
+                                                  listen: false)
+                                              .changeState(-1);
+                                        },
+                                        child: const Icon(
+                                          EvaIcons.arrowBackOutline,
+                                        ),
+                                      ),
+                                      Image.network(
+                                          car.picsUrl[
+                                              Provider.of<ImageIndexState>(
+                                                      context,
+                                                      listen: true)
+                                                  .imageIndex!],
+                                          height: 200.0,
+                                          width: 200.0,
+                                          fit: BoxFit.fill, loadingBuilder:
+                                              (_, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 30.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              CircularProgressIndicator(
+                                                color: Colors.black,
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                      GestureDetector(
+                                          onTap: () {
+                                            Provider.of<ImageIndexState>(
+                                                    context,
+                                                    listen: false)
+                                                .changeState(1);
+                                          },
+                                          child: const Icon(
+                                              EvaIcons.arrowForwardOutline)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: Image.network(
+                          car!.coverPicUrl,
+                          height: 100.0,
+                          width: 100.0,
+                          fit: BoxFit.fill,
+                          loadingBuilder: (_, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return CircularProgressIndicator(
+                              color: Colors.white,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            );
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -268,7 +312,7 @@ class CarStream extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            car!.brand +
+                            car.brand +
                                 ", " +
                                 car.type +
                                 ", " +
@@ -312,6 +356,101 @@ class CarStream extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 15.0),
+                          Row(
+                            children: [
+                              const Text(
+                                "Hide Car: ",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0,
+                                  fontFamily: "Montserrat",
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10.0,
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (context) => continueDialog(
+                                      title: "Hide Car",
+                                      message:
+                                          "Are you sure you want to continue?",
+                                      onYes: () async {
+                                        navigatorKey.currentState!.pop();
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              CircularProgressIndicator(
+                                                color: Colors.white,
+                                                backgroundColor: Colors.black,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        try {
+                                          await Database.hideCar(
+                                            car.hideCar == "true"
+                                                ? "false"
+                                                : "true",
+                                            car.docID,
+                                          );
+                                          navigatorKey.currentState!.pop();
+                                          car.hideCar == "true"
+                                              ? getToast(
+                                                  message:
+                                                      "The car is now hidden from all users",
+                                                  color: Colors.green,
+                                                )
+                                              : getToast(
+                                                  message:
+                                                      "The car is now visible to all users",
+                                                  color: Colors.green,
+                                                );
+                                        } on CustomException catch (ex) {
+                                          navigatorKey.currentState!.pop();
+                                          return getToast(
+                                            message: "Car couldnot be hidden",
+                                            color: Colors.red,
+                                          );
+                                        }
+                                      },
+                                      onNo: () {
+                                        navigatorKey.currentState!.pop();
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 5.0,
+                                    horizontal: 10.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Text(
+                                    car.hideCar,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontFamily: "Montserrat",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

@@ -1,9 +1,10 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:car_rental/screens/admin/tab_pages/cars.dart';
-import 'package:car_rental/screens/admin/tab_pages/history.dart';
+import 'package:car_rental/screens/admin/tab_pages/comingup_orders.dart';
 import 'package:car_rental/screens/user/tab_pages/home_page.dart';
 import 'package:car_rental/screens/user/tab_pages/user_orders.dart';
 import 'package:car_rental/screens/user/tab_pages/user_profile.dart';
+import 'package:car_rental/services/notification.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,8 @@ class _UserHomePageState extends State<UserHomePage>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    NotificationHandler.onMessageHandler();
+    NotificationHandler.resolveToken();
   }
 
   @override

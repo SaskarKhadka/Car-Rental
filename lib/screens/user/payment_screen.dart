@@ -167,6 +167,9 @@ class _PaymentState extends State<Payment> {
                                             fontSize: 16.0,
                                           ),
                                         ),
+                                        const SizedBox(
+                                          height: 20.0,
+                                        ),
                                         CustomTextField(
                                           controller: otpController,
                                           labelText: "OTP",
@@ -209,6 +212,12 @@ class _PaymentState extends State<Payment> {
                                                           .trim(),
                                                 ),
                                               );
+
+                                              //TODO: delete order;
+                                              await Database
+                                                  .orderCompleteTransaction(
+                                                      widget.args!["orderID"],
+                                                      widget.args!["car"]);
 
                                               navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();

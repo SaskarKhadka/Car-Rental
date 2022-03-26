@@ -1,8 +1,11 @@
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/components/waiting_dialog.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/user/tab_pages/home_page.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
 import 'package:car_rental/services/authentication.dart';
+import 'package:car_rental/services/database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_password_field.dart';
@@ -150,24 +153,203 @@ class _SignupState extends State<Signup> {
                                       builder: (context) => const WaitingDialog(
                                           title: "Authenticating"),
                                     );
+
                                     try {
                                       await Authentication.signUp(
-                                        userData: {
-                                          "name":
-                                              usernameController.text.trim(),
-                                          "email": emailController.text.trim(),
-                                          "phoneNumber":
-                                              phoneNumberController.text.trim(),
-                                        },
+                                        email: emailController.text.trim(),
                                         password: passwordController.text,
                                       );
+
                                       navigatorKey.currentState!.pop();
-                                      navigatorKey.currentState!
-                                          .pushNamed(UserHomePage.id);
-                                      getToast(
-                                          message:
-                                              "Account created successfully",
-                                          color: Colors.green);
+                                      // navigatorKey.currentState!
+                                      //     .pushNamed(UserHomePage.id);
+                                      // getToast(
+                                      //     message:
+                                      //         "Account created successfully",
+                                      //     color: Colors.green);
+
+                                      await Authentication
+                                          .sendEmailVerification(
+                                              email:
+                                                  emailController.text.trim());
+                                      await showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              side: const BorderSide(
+                                                color: Colors.black,
+                                                width: 4.0,
+                                                style: BorderStyle.solid,
+                                              ),
+                                            ),
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Text(
+                                                    'We have sent a verification link to your email address.\nYou have to verify your email before moving forward.',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontFamily: "Montserrat",
+                                                      fontSize: 20.0,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  CustomButton(
+                                                    // color: kBlackColour,
+                                                    // borderColour: kBlackColour,
+                                                    // shadowcolor: Colors.white,
+                                                    buttonContent: const Text(
+                                                      "CONFIRM",
+                                                      style:
+                                                          kButtonContentTextStye,
+                                                    ),
+                                                    width: double.infinity,
+                                                    onPressed: () async {
+                                                      showDialog(
+                                                          barrierDismissible:
+                                                              false,
+                                                          context: context,
+                                                          builder:
+                                                              (context) =>
+                                                                  Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: const [
+                                                                      CircularProgressIndicator(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        backgroundColor:
+                                                                            Colors.white,
+                                                                      ),
+                                                                    ],
+                                                                  ));
+                                                      await Authentication
+                                                          .reload();
+                                                      if (await Authentication
+                                                          .isEmailVerified()) {
+                                                        try {
+                                                          String? token =
+                                                              await FirebaseMessaging
+                                                                  .instance
+                                                                  .getToken();
+                                                          await Database
+                                                              .saveToken(
+                                                                  token!);
+                                                        } catch (ex) {
+                                                          print(ex.toString());
+                                                        }
+
+                                                        try {
+                                                          await Database
+                                                              .addUser(
+                                                            {
+                                                              "name":
+                                                                  usernameController
+                                                                      .text
+                                                                      .trim(),
+                                                              "email":
+                                                                  emailController
+                                                                      .text
+                                                                      .trim(),
+                                                              "phoneNumber":
+                                                                  phoneNumberController
+                                                                      .text
+                                                                      .trim(),
+                                                            },
+                                                          );
+                                                        } on Exception catch (ex) {
+                                                          await Authentication
+                                                              .deleteUser();
+                                                          await Authentication
+                                                              .signOut();
+                                                          navigatorKey
+                                                              .currentState!
+                                                              .pop();
+                                                          navigatorKey
+                                                              .currentState!
+                                                              .pop();
+                                                          return getToast(
+                                                            message:
+                                                                "Account couldnot be created",
+                                                            color: Colors.red,
+                                                          );
+                                                        }
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pushNamed(
+                                                                Signin.id);
+
+                                                        getToast(
+                                                          message:
+                                                              'Your email has been verified',
+                                                          color: Colors.green,
+                                                        );
+                                                      } else {
+                                                        await Authentication
+                                                            .deleteUser();
+                                                        await Authentication
+                                                            .signOut();
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        getToast(
+                                                          message:
+                                                              'Your email has not been verified',
+                                                          color: Colors.green,
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  CustomButton(
+                                                    buttonContent: const Text(
+                                                      "RESEND",
+                                                      style:
+                                                          kButtonContentTextStye,
+                                                    ),
+                                                    width: double.infinity,
+                                                    onPressed: () async {
+                                                      try {
+                                                        await Authentication
+                                                            .sendEmailVerification();
+                                                      } on CustomException catch (ex) {
+                                                        getToast(
+                                                            message:
+                                                                'Too many requests.Please, try again later.');
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
                                     } on Exception catch (ex) {
                                       navigatorKey.currentState!.pop();
                                       getToast(

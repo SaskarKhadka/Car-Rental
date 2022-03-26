@@ -2,17 +2,19 @@ import 'package:car_rental/main.dart';
 import 'package:flutter/material.dart';
 
 class CarDetailsDialog extends StatelessWidget {
+  final String coverPicUrl;
   final String brand;
   final String type;
-  final String totalSeats;
+  final String numberOfSeats;
   final String mileage;
   final String registrationNumber;
   final String ratePerDay;
   const CarDetailsDialog(
       {Key? key,
+      required this.coverPicUrl,
       required this.brand,
       required this.type,
-      required this.totalSeats,
+      required this.numberOfSeats,
       required this.mileage,
       required this.registrationNumber,
       required this.ratePerDay})
@@ -71,11 +73,21 @@ class CarDetailsDialog extends StatelessWidget {
                 // ),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16.0),
-                  child: Image.asset(
-                    "images/lambo.jpg",
+                  child: Image.network(
+                    coverPicUrl,
                     height: 100.0,
                     width: 150.0,
                     fit: BoxFit.fill,
+                    loadingBuilder: (_, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return CircularProgressIndicator(
+                        color: Colors.white,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      );
+                    },
                   ),
                 ),
                 SizedBox(
@@ -169,7 +181,7 @@ class CarDetailsDialog extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Total Seats: $totalSeats',
+                      'Total Seats: $numberOfSeats',
                       style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontSize: 16.0,

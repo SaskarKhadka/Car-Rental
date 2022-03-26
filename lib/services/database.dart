@@ -15,6 +15,7 @@ class Database {
     final userRef = firestoreInstance.collection("users").doc();
     userData["id"] = Authentication.userID;
     userData["profileUrl"] = await CloudStorage.genericProfileUrl();
+    userData["totalOrder"] = 0;
     await userRef.set(userData);
   }
 
@@ -40,9 +41,9 @@ class Database {
     return admin;
   }
 
-  static Stream<QuerySnapshot> requestsStream() {
-    return firestoreInstance.collection("requests").snapshots();
-  }
+  // static Stream<QuerySnapshot> requestsStream() {
+  //   return firestoreInstance.collection("requests").snapshots();
+  // }
 
   static saveCar(Map<String, dynamic> carData) async {
     final carRef = firestoreInstance.collection("cars").doc();
@@ -109,6 +110,7 @@ class Database {
       String? pickUpDate, String? dropOffDate) {
     return firestoreInstance
         .collection("cars")
+        .where("hideCar", isEqualTo: "false")
         .snapshots()
         .map((querySnap) => querySnap.docs.map((queryDocSnap) {
               final carData = queryDocSnap.data();
@@ -160,6 +162,7 @@ class Database {
   static Stream<List<Order?>> allOrders() {
     return firestoreInstance
         .collection("orders")
+        // .where("isPending", isEqualTo: "true")
         .snapshots()
         .map((querySnap) => querySnap.docs.map((queryDocSnap) {
               final orderData = queryDocSnap.data();
@@ -222,8 +225,20 @@ class Database {
             }).toList());
   }
 
+  static Future<bool> phoneNumberExists() async {
+    final data = await firestoreInstance
+        .collection("users")
+        .where(
+          "id",
+          isEqualTo: Authentication.userID,
+        )
+        .get();
+    return data.docs[0].data()["phoneNumber"] != null;
+  }
+
   static orderPlacingTransaction(Map<String, dynamic> orderDetails) async {
     try {
+      orderDetails["isPending"] = "true";
       final orderRef = firestoreInstance.collection("orders").doc();
       final user = await firestoreInstance
           .collection("users")
@@ -294,6 +309,42 @@ class Database {
     }
   }
 
+  static orderCompleteTransaction(
+    String? orderID,
+    String? carID,
+    // String? userID,
+  ) async {
+    try {
+      final orderRef = firestoreInstance.collection("orders").doc(orderID);
+      final user = await firestoreInstance
+          .collection("users")
+          .where("id", isEqualTo: Authentication.userID)
+          .get();
+      final userRef =
+          firestoreInstance.collection("users").doc(user.docs[0].id);
+      final carRef = firestoreInstance.collection("cars").doc(carID);
+      final carDocSnap = await carRef.get();
+      final carAvailability =
+          carDocSnap.data()!["availability"] as Map<String, dynamic>;
+      carAvailability.remove(orderRef.id);
+      final totalOrders = await totalOrder(Authentication.userID);
+
+      await firestoreInstance.runTransaction((transaction) async {
+        transaction.delete(orderRef);
+        transaction.update(carRef, {"availability": carAvailability});
+        transaction.update(userRef, {
+          "totalOrder": totalOrders - 1,
+        });
+      });
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.message!);
+    } on RangeError catch (ex) {
+      throw CustomException(ex.message);
+    } on SocketException catch (ex) {
+      throw CustomException(ex.message);
+    }
+  }
+
   // static addCarTransaction(
   //     List<XFile?> files, Map<String, dynamic> carData) async {
   //   final carRef = firestoreInstance.collection("cars").doc();
@@ -309,4 +360,114 @@ class Database {
   //     throw CustomException(ex.message);
   //   }
   // }
+
+  static Future<int> totalCarPics(String? carID) async {
+    final docSnapsot =
+        await firestoreInstance.collection("cars").doc(carID).get();
+    final List picsUrl = docSnapsot.data()!["picsUrl"];
+    return picsUrl.length;
+  }
+
+  static Stream<List<Order?>> comingUpOrders() {
+    DateTime today = DateTime.now();
+    DateTime tomorrow = DateTime(today.year, today.month, today.day + 1);
+    final todayStr = "${today.year}/${today.month}/${today.day}";
+    final tomorrowStr = "${tomorrow.year}/${tomorrow.month}/${tomorrow.day}";
+    // final checkDate =
+    return firestoreInstance
+        .collection("orders")
+        .where("pickUpDate", whereIn: [todayStr, tomorrowStr])
+        .snapshots()
+        .map(
+          (querySnap) => querySnap.docs
+              .map(
+                (queryDocSnap) => Order.fromData(
+                    orderData: queryDocSnap.data(), id: queryDocSnap.id),
+              )
+              .toList(),
+        );
+  }
+
+  static updatePhoneNumber(String phoneNumber) async {
+    try {
+      final userQuerySnap = await firestoreInstance
+          .collection("users")
+          .where(
+            "id",
+            isEqualTo: Authentication.userID,
+          )
+          .get();
+      final userQueryDocSnap = userQuerySnap.docs[0];
+      final userRef =
+          firestoreInstance.collection("users").doc(userQueryDocSnap.id);
+      userRef.update({"phoneNumber": phoneNumber});
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.toString());
+    } on RangeError catch (ex) {
+      print(ex.message);
+      throw CustomException(ex.toString());
+    }
+  }
+
+  static hideCar(String? state, String? carID) {
+    try {
+      final carRef = firestoreInstance.collection("cars").doc(carID);
+      carRef.update({"hideCar": state});
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.message!);
+    }
+  }
+
+  static Future<String?> getMyToken() async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where(
+          "id",
+          isEqualTo: Authentication.userID,
+        )
+        .get();
+    final userQueryDocSnap = userQuerySnap.docs[0];
+    String? token = userQueryDocSnap.data()["token"];
+    return token;
+  }
+
+  static Future<void> saveToken(String token) async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where(
+          "id",
+          isEqualTo: Authentication.userID,
+        )
+        .get();
+    final userQueryDocSnap = userQuerySnap.docs[0];
+    final userRef =
+        firestoreInstance.collection("users").doc(userQueryDocSnap.id);
+    await userRef.update({"token": token});
+  }
+
+  static Future<List<String?>> getAdminsToken() async {
+    final querySnap = await firestoreInstance
+        .collection("users")
+        .where(
+          "isAdmin",
+          isEqualTo: true,
+        )
+        .get();
+    return querySnap.docs.map((queryDocSnap) {
+      final data = queryDocSnap.data();
+      if (data["token"] != null) return data["token"] as String;
+    }).toList();
+  }
+
+  static Future<String?> getToken(String? uid) async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where(
+          "id",
+          isEqualTo: uid,
+        )
+        .get();
+    final userQueryDocSnap = userQuerySnap.docs[0];
+    return userQueryDocSnap.data()["token"];
+  }
 }

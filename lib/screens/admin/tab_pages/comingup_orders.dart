@@ -1,19 +1,24 @@
 import 'package:car_rental/components/car_details_dialog.dart';
 import 'package:car_rental/components/continue_dialog.dart';
+import 'package:car_rental/components/custom_exception.dart';
+import 'package:car_rental/components/profile_dialog.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
+import 'package:car_rental/model/user.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/google_auth.dart';
+import 'package:car_rental/services/notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class UserOrders extends StatelessWidget {
-  const UserOrders({Key? key}) : super(key: key);
+class OrdersForTodayAndTomorrow extends StatelessWidget {
+  const OrdersForTodayAndTomorrow({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +52,35 @@ class UserOrders extends StatelessWidget {
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () async {
+                  try {
+                    await GoogleAuthentication.signOut();
+                    await Authentication.signOut();
+                    navigatorKey.currentState!
+                        .pushNamedAndRemoveUntil(Signin.id, (route) => false);
+                  } on PlatformException catch (ex) {
+                    await Authentication.signOut();
+                    navigatorKey.currentState!
+                        .pushNamedAndRemoveUntil(Signin.id, (route) => false);
+                  } on CustomException catch (ex) {
+                    getToast(
+                      message: "Couldnot sign out",
+                      color: Colors.red,
+                    );
+                  }
+                },
+                child: const Icon(
+                  EvaIcons.logOutOutline,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              ),
+            ),
+          ],
         ),
         body: Scrollbar(
           child: UserOrdersStream(),
@@ -67,38 +101,33 @@ class UserOrdersStream extends StatelessWidget {
         right: 20.0,
       ),
       child: StreamBuilder<List<Order?>>(
-        stream: Database.userOrdersStream(),
+        stream: Database.comingUpOrders(),
         builder: (context, snapshot) {
-          // print(snapshot.data!.docs);
+          print(snapshot.data);
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                'You have no orders',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 25,
-                ),
+            return Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'You have no recent orders',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                    ),
+                  ),
+                ],
               ),
             );
           }
           final orders = snapshot.data!;
+          print(orders);
           return ListView.builder(
             shrinkWrap: true,
             itemCount: orders.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              // if (orders[index].data()["placedBy"] != Authentication.userID) {
-              //   return Container();
-              // }
               final order = orders[index];
-              // final Order? order =
-              //     Order.fromData(orderData: orderData, id: orderData.id);
-              final todaysDate = DateTime.now();
-              final pickUpDateList = order!.pickUpDate.split("/");
-              final pickUpDate = DateTime(int.parse(pickUpDateList[0]),
-                  int.parse(pickUpDateList[1]), int.parse(pickUpDateList[2]));
-              print(todaysDate);
-              print(pickUpDate);
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 30.0),
@@ -137,7 +166,7 @@ class UserOrdersStream extends StatelessWidget {
                                   height: 12.0,
                                 ),
                                 Text(
-                                  "Date: ${order.pickUpDate}",
+                                  "Date: ${order!.pickUpDate}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
@@ -215,6 +244,64 @@ class UserOrdersStream extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          Flexible(
+                            child: StreamBuilder<List<User?>>(
+                                stream: Database.getUser(order.placedBy),
+                                builder: (context, snapshot) {
+                                  print(order.placedBy);
+                                  if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      backgroundColor: Colors.white54,
+                                    );
+                                  }
+                                  User? user = snapshot.data![0];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return ProfileDialog(
+                                              name: user!.name,
+                                              email: user.email,
+                                              phoneNumber: user.phoneNumber,
+                                              profileUrl: user.profileUrl,
+                                            );
+                                          });
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: 20.0,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(70),
+                                        child: Image.network(user!.profileUrl,
+                                            fit: BoxFit.fill,
+                                            height: 40,
+                                            width: 40, loadingBuilder:
+                                                (_, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return CircularProgressIndicator(
+                                            color: Colors.black,
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                          );
+                                          // imageUrl: this.strImageURL,
+                                        } //
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          ),
                           iconButton(
                             onTap: () {
                               showDialog(
@@ -257,39 +344,74 @@ class UserOrdersStream extends StatelessWidget {
                             color: Colors.blue[400],
                             icon: EvaIcons.carOutline,
                           ),
-                          pickUpDate
-                                      .difference(DateTime(todaysDate.year,
-                                          todaysDate.month, todaysDate.day))
-                                      .inDays <=
-                                  1
-                              ? iconButton(
-                                  onTap: () {
-                                    //TODO:do something
-                                  },
-                                  color: Colors.blue,
-                                  icon: EvaIcons.messageCircleOutline,
-                                )
-                              : Container(),
-                          todaysDate.isAfter(pickUpDate)
-                              ? iconButton(
-                                  onTap: () {
-                                    // do something
-                                    navigatorKey.currentState!.pushNamed(
-                                      Payment.id,
-                                      arguments: {
-                                        "car": order.car,
-                                        "orderID": order.docID,
-                                      },
+                          iconButton(
+                            onTap: () {
+                              //do something
+                            },
+                            color: Colors.blue,
+                            icon: EvaIcons.messageCircleOutline,
+                          ),
+                          iconButton(
+                            onTap: () async {
+                              await showDialog(
+                                context: context,
+                                builder: (context) => continueDialog(
+                                  title: "Delete Order",
+                                  message: "Are you sure you want to continue?",
+                                  onYes: () async {
+                                    navigatorKey.currentState!.pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          CircularProgressIndicator(
+                                            color: Colors.white,
+                                            backgroundColor: Colors.black,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    try {
+                                      await Database.orderDeleteTransaction(
+                                        order.docID,
+                                        order.car,
+                                        order.placedBy,
+                                      );
+
+                                      try {
+                                        NotificationHandler.sendNotification(
+                                          token: await Database.getToken(
+                                              order.placedBy),
+                                          body: "Your request was deleted",
+                                          title: "Order Deleted",
+                                        );
+                                      } catch (ex) {}
+                                    } on CustomException catch (ex) {
+                                      navigatorKey.currentState!.pop();
+                                      return getToast(
+                                        message:
+                                            "Your order couldnot be deleted",
+                                        color: Colors.red,
+                                      );
+                                    }
+                                    navigatorKey.currentState!.pop();
+                                    getToast(
+                                      message: "Your order has been deleted",
+                                      color: Colors.green,
                                     );
                                   },
-                                  color: const Color.fromARGB(255, 89, 180, 66),
-                                  icon: Icons.payment_outlined,
-                                )
-                              : iconButton(
-                                  onTap: () {},
-                                  color: const Color(0xFFDA5D59),
-                                  icon: Icons.delete,
+                                  onNo: () {
+                                    navigatorKey.currentState!.pop();
+                                  },
                                 ),
+                              );
+                            },
+                            color: const Color(0xFFDA5D59),
+                            icon: Icons.delete,
+                          ),
                         ],
                       ),
                     ],

@@ -9,6 +9,7 @@ import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/available_cars.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
+import 'package:car_rental/services/google_auth.dart';
 import 'package:car_rental/state/date_state.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -235,6 +236,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     onTap: () {
+                      // GoogleAuthentication.signOut();
+                      // Authentication.signOut();
+                      // return;
                       _pickDate(context, true);
                     },
                   ),

@@ -8,7 +8,7 @@ class User {
   User.fromData({required Map<String, dynamic> userData, required this.id}) {
     name = userData["name"];
     email = userData["email"];
-    phoneNumber = userData["phoneNumber"];
+    phoneNumber = userData["phoneNumber"] ?? "Phone Number";
     profileUrl = userData["profileUrl"];
   }
 

@@ -1,6 +1,7 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:car_rental/screens/admin/tab_pages/cars.dart';
-import 'package:car_rental/screens/admin/tab_pages/history.dart';
+import 'package:car_rental/screens/admin/tab_pages/comingup_orders.dart';
+import 'package:car_rental/services/notification.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'tab_pages/orders.dart';
@@ -21,6 +22,8 @@ class _AdminHomePageState extends State<AdminHomePage>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    NotificationHandler.onMessageHandler();
+    NotificationHandler.resolveToken();
   }
 
   @override
@@ -38,9 +41,9 @@ class _AdminHomePageState extends State<AdminHomePage>
         // dragStartBehavior: DragStartBehavior.down,
         controller: tabController,
         children: [
+          const OrdersForTodayAndTomorrow(),
           const Orders(),
           Cars(),
-          History(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -52,10 +55,11 @@ class _AdminHomePageState extends State<AdminHomePage>
         showUnselectedLabels: false,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(EvaIcons.homeOutline), label: "Requests"),
+              icon: Icon(Icons.next_plan_outlined), label: "Coming Up"),
+          BottomNavigationBarItem(
+              icon: Icon(EvaIcons.archiveOutline), label: "All Orders"),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.carOutline), label: "Cars"),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
         ],
         currentIndex: _selectedIndex,
         onTap: (index) {

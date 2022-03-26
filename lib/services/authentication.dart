@@ -13,12 +13,10 @@ class Authentication {
   }
 
   static Future<void> signUp(
-      {required Map<String, dynamic> userData,
-      required String password}) async {
+      {required String email, required String password}) async {
     try {
       await _auth.createUserWithEmailAndPassword(
-          email: userData["email"], password: password);
-      await Database.addUser(userData);
+          email: email, password: password);
     } on FirebaseAuthException catch (ex) {
       throw CustomException(ex.message!);
     }
@@ -67,5 +65,13 @@ class Authentication {
 
   static Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  static Future<void> deleteUser() async {
+    try {
+      await currentUser!.delete();
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.message!);
+    }
   }
 }

@@ -210,6 +210,7 @@ class _AddNewCarState extends State<AddNewCar> {
                               carRegistrationController!.text.trim(),
                           "coverPicUrl": coverPicUrl,
                           "picsUrl": picsUrl,
+                          "hideCar": "false",
                         });
                         navigatorKey.currentState!.pop();
                         navigatorKey.currentState!.pop();
