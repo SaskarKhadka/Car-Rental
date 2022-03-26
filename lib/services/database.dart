@@ -470,4 +470,41 @@ class Database {
     final userQueryDocSnap = userQuerySnap.docs[0];
     return userQueryDocSnap.data()["token"];
   }
+
+  static Future<bool> verificationExists() async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where(
+          "id",
+          isEqualTo: Authentication.userID,
+        )
+        .get();
+    final userQueryDocSnap = userQuerySnap.docs[0];
+    final data = userQueryDocSnap.data();
+    List citizenship = data["citizenship"] ?? [];
+    List lisence = data["lisence"] ?? [];
+    return citizenship.length == 2 && lisence.length == 2;
+  }
+
+  static addCitizenshipPics(List<String> urls) async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where("id", isEqualTo: Authentication.userID)
+        .get();
+    final userQueryDocSnap = userQuerySnap.docs[0];
+    final userRef =
+        firestoreInstance.collection("users").doc(userQueryDocSnap.id);
+    await userRef.update({"citizenship": urls});
+  }
+
+  static addLisencePics(List<String> urls) async {
+    final userQuerySnap = await firestoreInstance
+        .collection("users")
+        .where("id", isEqualTo: Authentication.userID)
+        .get();
+    final userQueryDocSnap = userQuerySnap.docs[0];
+    final userRef =
+        firestoreInstance.collection("users").doc(userQueryDocSnap.id);
+    await userRef.update({"lisence": urls});
+  }
 }

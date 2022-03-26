@@ -1,5 +1,6 @@
 import 'package:car_rental/components/car_details_dialog.dart';
 import 'package:car_rental/components/continue_dialog.dart';
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
@@ -257,19 +258,6 @@ class UserOrdersStream extends StatelessWidget {
                             color: Colors.blue[400],
                             icon: EvaIcons.carOutline,
                           ),
-                          pickUpDate
-                                      .difference(DateTime(todaysDate.year,
-                                          todaysDate.month, todaysDate.day))
-                                      .inDays <=
-                                  1
-                              ? iconButton(
-                                  onTap: () {
-                                    //TODO:do something
-                                  },
-                                  color: Colors.blue,
-                                  icon: EvaIcons.messageCircleOutline,
-                                )
-                              : Container(),
                           todaysDate.isAfter(pickUpDate)
                               ? iconButton(
                                   onTap: () {
@@ -286,7 +274,57 @@ class UserOrdersStream extends StatelessWidget {
                                   icon: Icons.payment_outlined,
                                 )
                               : iconButton(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) => continueDialog(
+                                        title: "Delete Order",
+                                        message:
+                                            "Are you sure you want to continue?",
+                                        onYes: () async {
+                                          navigatorKey.currentState!.pop();
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: const [
+                                                CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  backgroundColor: Colors.black,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                          try {
+                                            await Database
+                                                .orderDeleteTransaction(
+                                              order.docID,
+                                              order.car,
+                                              order.placedBy,
+                                            );
+                                          } on CustomException catch (ex) {
+                                            navigatorKey.currentState!.pop();
+                                            return getToast(
+                                              message:
+                                                  "Your order couldnot be deleted",
+                                              color: Colors.red,
+                                            );
+                                          }
+                                          navigatorKey.currentState!.pop();
+                                          getToast(
+                                            message:
+                                                "Your order has been deleted",
+                                            color: Colors.green,
+                                          );
+                                        },
+                                        onNo: () {
+                                          navigatorKey.currentState!.pop();
+                                        },
+                                      ),
+                                    );
+                                  },
                                   color: const Color(0xFFDA5D59),
                                   icon: Icons.delete,
                                 ),

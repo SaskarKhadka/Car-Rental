@@ -348,9 +348,7 @@ class AvailableCarsStream extends StatelessWidget {
                                               ],
                                             ),
                                           );
-                                          final bool phoneNumberExists =
-                                              await Database
-                                                  .phoneNumberExists();
+
                                           final int totalOrders =
                                               await Database.totalOrder(
                                                   Authentication.userID);
@@ -358,9 +356,26 @@ class AvailableCarsStream extends StatelessWidget {
                                             navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
                                             return getToast(
-                                                message:
-                                                    "You can only place 3 orders at a time");
+                                              message:
+                                                  "You can only place 3 orders at a time",
+                                              color: Colors.red,
+                                            );
                                           }
+                                          final bool verificationExists =
+                                              await Database
+                                                  .verificationExists();
+                                          if (!verificationExists) {
+                                            navigatorKey.currentState!.pop();
+                                            navigatorKey.currentState!.pop();
+                                            return getToast(
+                                              message:
+                                                  "You need to upload your Citizenship and Lisence picture",
+                                              color: Colors.red,
+                                            );
+                                          }
+                                          final bool phoneNumberExists =
+                                              await Database
+                                                  .phoneNumberExists();
                                           if (phoneNumberExists) {
                                             args!["car"] = car.docID;
                                             args!["placedBy"] =

@@ -4,12 +4,16 @@ class User {
   late String email;
   late String phoneNumber;
   late String profileUrl;
+  late List citizenship;
+  late List lisence;
 
   User.fromData({required Map<String, dynamic> userData, required this.id}) {
     name = userData["name"];
     email = userData["email"];
     phoneNumber = userData["phoneNumber"] ?? "Phone Number";
     profileUrl = userData["profileUrl"];
+    citizenship = userData["citizenship"] ?? [];
+    lisence = userData["citizenship"] ?? [];
   }
 
   User({
@@ -17,6 +21,8 @@ class User {
     required this.name,
     required this.email,
     required this.phoneNumber,
+    required this.citizenship,
+    required this.lisence,
   });
 
   Map<String, dynamic> get toJson => {
@@ -24,5 +30,7 @@ class User {
         "name": name,
         "email": email,
         "phoneNumber": phoneNumber,
+        "citizenship": citizenship,
+        "lisence": lisence,
       };
 }

@@ -3,6 +3,7 @@ import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CloudStorage {
   static String userID = Authentication.userID;
@@ -74,6 +75,78 @@ class CloudStorage {
       return url;
     } on FirebaseException catch (ex) {
       throw CustomException(ex.message!);
+    }
+  }
+
+  static citizenshipPics(List<XFile?> files) async {
+    final ref = instance.ref('citizenshipPics/$userID');
+    try {
+      ListResult listResult;
+      // String prevProfileName;
+      try {
+        listResult = await ref.listAll();
+        if (listResult.items.isNotEmpty) {
+          for (final each in listResult.items) {
+            String? name = each.name;
+            await instance.ref('citizenshipPics/$userID/$name').delete();
+          }
+        }
+      } on FirebaseException catch (ex) {
+        throw CustomException(ex.message!);
+      }
+
+      List<String> citizenshipUrls = [];
+      int side = 1;
+      for (final eachFile in files) {
+        try {
+          File? image = File(eachFile!.path);
+          await ref.child("side $side").putFile(image);
+          String url = await ref.child("side $side").getDownloadURL();
+          citizenshipUrls.add(url);
+          side++;
+        } catch (ex) {
+          throw CustomException(ex.toString());
+        }
+      }
+      await Database.addCitizenshipPics(citizenshipUrls);
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.toString());
+    }
+  }
+
+  static lisencePics(List<XFile?> files) async {
+    final ref = instance.ref('lisencePics/$userID');
+    try {
+      ListResult listResult;
+      // String prevProfileName;
+      try {
+        listResult = await ref.listAll();
+        if (listResult.items.isNotEmpty) {
+          for (final each in listResult.items) {
+            String? name = each.name;
+            await instance.ref('lisencePics/$userID/$name').delete();
+          }
+        }
+      } on FirebaseException catch (ex) {
+        throw CustomException(ex.message!);
+      }
+
+      List<String> lisenceUrls = [];
+      int side = 1;
+      for (final eachFile in files) {
+        try {
+          File? image = File(eachFile!.path);
+          await ref.child("side $side").putFile(image);
+          String url = await ref.child("side $side").getDownloadURL();
+          lisenceUrls.add(url);
+          side++;
+        } catch (ex) {
+          throw CustomException(ex.toString());
+        }
+      }
+      await Database.addLisencePics(lisenceUrls);
+    } on FirebaseException catch (ex) {
+      throw CustomException(ex.toString());
     }
   }
 }

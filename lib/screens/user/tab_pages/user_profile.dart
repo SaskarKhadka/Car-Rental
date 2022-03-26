@@ -64,11 +64,14 @@ class _UserProfileState extends State<UserProfile> {
             User? user = snapshot.data![0];
 
             return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 15.0,
-                horizontal: 20.0,
+              padding: const EdgeInsets.only(
+                top: 30.0,
+                bottom: 30.0,
+                right: 20.0,
+                left: 20.0,
               ),
-              child: Center(
+              child: Scrollbar(
+                thickness: 0.0,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -159,12 +162,14 @@ class _UserProfileState extends State<UserProfile> {
                             const SizedBox(
                               width: 15.0,
                             ),
-                            Text(
-                              user.name,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Montserrat",
-                                fontSize: 18.0,
+                            Flexible(
+                              child: Text(
+                                user.name,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Montserrat",
+                                  fontSize: 18.0,
+                                ),
                               ),
                             ),
                           ],
@@ -328,6 +333,153 @@ class _UserProfileState extends State<UserProfile> {
                                 color: Colors.black,
                                 fontFamily: "Montserrat",
                                 fontSize: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    CustomButton(
+                      onPressed: () async {
+                        final imgPicker = ImagePicker();
+                        final pickedFiles =
+                            await imgPicker.pickMultiImage() ?? [];
+
+                        if (pickedFiles.isEmpty) return;
+                        if (pickedFiles.length != 2) {
+                          return getToast(
+                            message: "You need to have exactly 2 pictures",
+                            color: Colors.red,
+                          );
+                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              CircularProgressIndicator(
+                                color: Colors.white,
+                                backgroundColor: Colors.black,
+                              ),
+                            ],
+                          ),
+                        );
+                        try {
+                          await CloudStorage.lisencePics(pickedFiles);
+                          navigatorKey.currentState!.pop();
+                          return getToast(
+                            message: "Lisence pictures successfully uploaded",
+                            color: Colors.green,
+                          );
+                        } catch (ex) {
+                          navigatorKey.currentState!.pop();
+                          return getToast(
+                            message: "Your pictures were not uploaded",
+                            color: Colors.red,
+                          );
+                        }
+                      },
+                      width: double.infinity,
+                      buttonColor: Colors.green,
+                      borderRadius: 20.0,
+                      buttonContent: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              EvaIcons.uploadOutline,
+                              color: Colors.black,
+                              size: 22.0,
+                            ),
+                            SizedBox(
+                              width: 15.0,
+                            ),
+                            Flexible(
+                              child: Text(
+                                "Lisence (both sides)",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Montserrat",
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    CustomButton(
+                      onPressed: () async {
+                        final imgPicker = ImagePicker();
+                        final pickedFiles =
+                            await imgPicker.pickMultiImage() ?? [];
+
+                        if (pickedFiles.isEmpty) return;
+                        if (pickedFiles.length != 2) {
+                          return getToast(
+                            message: "You need to have exactly 2 pictures",
+                            color: Colors.red,
+                          );
+                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              CircularProgressIndicator(
+                                color: Colors.white,
+                                backgroundColor: Colors.black,
+                              ),
+                            ],
+                          ),
+                        );
+                        try {
+                          await CloudStorage.citizenshipPics(pickedFiles);
+                          navigatorKey.currentState!.pop();
+                          return getToast(
+                            message:
+                                "Citizenship pictures successfully uploaded",
+                            color: Colors.green,
+                          );
+                        } catch (ex) {
+                          navigatorKey.currentState!.pop();
+                          return getToast(
+                            message: "Your pictures were not uploaded",
+                            color: Colors.red,
+                          );
+                        }
+                      },
+                      width: double.infinity,
+                      borderRadius: 20.0,
+                      buttonColor: Colors.green,
+                      buttonContent: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              EvaIcons.uploadOutline,
+                              color: Colors.black,
+                              size: 22.0,
+                            ),
+                            SizedBox(
+                              width: 15.0,
+                            ),
+                            Text(
+                              "Citizenship (both sides)",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Montserrat",
+                                fontSize: 16.0,
                               ),
                             ),
                           ],

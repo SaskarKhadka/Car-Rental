@@ -267,6 +267,8 @@ class UserOrdersStream extends StatelessWidget {
                                               email: user.email,
                                               phoneNumber: user.phoneNumber,
                                               profileUrl: user.profileUrl,
+                                              citizenship: user.citizenship,
+                                              lisence: user.lisence,
                                             );
                                           });
                                     },
@@ -345,13 +347,6 @@ class UserOrdersStream extends StatelessWidget {
                             icon: EvaIcons.carOutline,
                           ),
                           iconButton(
-                            onTap: () {
-                              //do something
-                            },
-                            color: Colors.blue,
-                            icon: EvaIcons.messageCircleOutline,
-                          ),
-                          iconButton(
                             onTap: () async {
                               await showDialog(
                                 context: context,
@@ -385,7 +380,7 @@ class UserOrdersStream extends StatelessWidget {
                                         NotificationHandler.sendNotification(
                                           token: await Database.getToken(
                                               order.placedBy),
-                                          body: "Your request was deleted",
+                                          body: "Your order was deleted",
                                           title: "Order Deleted",
                                         );
                                       } catch (ex) {}
@@ -393,13 +388,13 @@ class UserOrdersStream extends StatelessWidget {
                                       navigatorKey.currentState!.pop();
                                       return getToast(
                                         message:
-                                            "Your order couldnot be deleted",
+                                            "The order couldnot be deleted",
                                         color: Colors.red,
                                       );
                                     }
                                     navigatorKey.currentState!.pop();
                                     getToast(
-                                      message: "Your order has been deleted",
+                                      message: "The order has been deleted",
                                       color: Colors.green,
                                     );
                                   },

@@ -11,6 +11,7 @@ import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/google_auth.dart';
+import 'package:car_rental/services/notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -261,6 +262,8 @@ class UserOrdersStream extends StatelessWidget {
                                               email: user.email,
                                               phoneNumber: user.phoneNumber,
                                               profileUrl: user.profileUrl,
+                                              citizenship: user.citizenship,
+                                              lisence: user.lisence,
                                             );
                                           });
                                     },
@@ -338,13 +341,6 @@ class UserOrdersStream extends StatelessWidget {
                             color: Colors.blue[400],
                             icon: EvaIcons.carOutline,
                           ),
-                          // iconButton(
-                          //   onTap: () {
-                          //     //do something
-                          //   },
-                          //   color: Colors.blue,
-                          //   icon: EvaIcons.messageCircleOutline,
-                          // ),
                           iconButton(
                             onTap: () async {
                               await showDialog(
@@ -374,17 +370,25 @@ class UserOrdersStream extends StatelessWidget {
                                         order.car,
                                         order.placedBy,
                                       );
+                                      try {
+                                        NotificationHandler.sendNotification(
+                                          token: await Database.getToken(
+                                              order.placedBy),
+                                          body: "Your order was deleted",
+                                          title: "Order Deleted",
+                                        );
+                                      } catch (ex) {}
                                     } on CustomException catch (ex) {
                                       navigatorKey.currentState!.pop();
                                       return getToast(
                                         message:
-                                            "Your order couldnot be deleted",
+                                            "The order couldnot be deleted",
                                         color: Colors.red,
                                       );
                                     }
                                     navigatorKey.currentState!.pop();
                                     getToast(
-                                      message: "Your order has been deleted",
+                                      message: "The order has been deleted",
                                       color: Colors.green,
                                     );
                                   },

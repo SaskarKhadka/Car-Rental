@@ -8,6 +8,7 @@ import 'package:car_rental/screens/splash_screen.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
 import 'package:car_rental/state/car_pics_state.dart';
 import 'package:car_rental/state/car_state.dart';
+import 'package:car_rental/state/card_index_date.dart';
 import 'package:car_rental/state/date_state.dart';
 import 'package:car_rental/state/image_index_state.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,6 +44,7 @@ class CarRental extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => DateState()),
         ChangeNotifierProvider(create: (context) => CarPicsState()),
         ChangeNotifierProvider(create: (context) => ImageIndexState()),
+        ChangeNotifierProvider(create: (context) => CardIndexState()),
       ],
       // "test_public_key_76063d06952d4cc48cee6fd516fe41b8"
       builder: (context, _) => MaterialApp(

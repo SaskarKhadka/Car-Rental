@@ -8,6 +8,7 @@ class Order {
   late String placedBy;
   late String paidAmount;
   late String car;
+  late String bargain;
 
   Order.fromData(
       {required Map<String, dynamic> orderData, required String? id}) {
@@ -20,6 +21,7 @@ class Order {
     dropOffLocation = orderData["dropOffLocation"];
     timeStamp = orderData["timestamp"];
     placedBy = orderData["placedBy"];
+    bargain = orderData["bargain"] ?? "";
   }
 
   Order({
@@ -30,6 +32,7 @@ class Order {
     required this.dropOffLocation,
     required this.timeStamp,
     required this.placedBy,
+    required this.bargain,
   });
 
   Map<String, dynamic> get toJson => {
@@ -40,5 +43,6 @@ class Order {
         "dropOffLocation": dropOffLocation,
         "timeStamp": timeStamp,
         "placedBy": placedBy,
+        "bargain": bargain,
       };
 }
