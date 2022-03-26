@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:car_rental/constants/constants.dart';
 
+// class AlwaysDisabledFocusNode extends FocusNode {
+//   @override
+//   bool get hasFocus => false;
+// }
+
+// class AlwaysDisabledFocusNode extends FocusNode {
+//   @override
+//   bool get hasFocus => false;
+// }
+
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
@@ -11,6 +21,7 @@ class CustomTextField extends StatelessWidget {
   final bool isTransactionPin;
   final Color color;
   final bool isAmount;
+  final bool canBeEdited;
 
   const CustomTextField({
     Key? key,
@@ -22,6 +33,7 @@ class CustomTextField extends StatelessWidget {
     this.isTransactionPin = false,
     this.color = Colors.black,
     this.isAmount = false,
+    this.canBeEdited = true,
   }) : super(key: key);
 
   String? validate(String? username) {
@@ -95,6 +107,7 @@ class CustomTextField extends StatelessWidget {
                       ? validateAmount
                       : validate,
       cursorColor: color,
+      enabled: canBeEdited,
       keyboardType: isPhoneNumber || isTransactionPin || isAmount
           ? TextInputType.number
           : TextInputType.emailAddress,
@@ -111,6 +124,9 @@ class CustomTextField extends StatelessWidget {
         ),
         labelStyle: kTextFieldLabelStyle.copyWith(
           color: color,
+        ),
+        disabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: color),
         ),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: color),

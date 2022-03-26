@@ -239,6 +239,7 @@ class Database {
   static orderPlacingTransaction(Map<String, dynamic> orderDetails) async {
     try {
       orderDetails["isPending"] = "true";
+      orderDetails["endBargain"] = "false";
       final orderRef = firestoreInstance.collection("orders").doc();
       final user = await firestoreInstance
           .collection("users")
@@ -506,5 +507,19 @@ class Database {
     final userRef =
         firestoreInstance.collection("users").doc(userQueryDocSnap.id);
     await userRef.update({"lisence": urls});
+  }
+
+  static updateBargain(String? orderID, String? newBargain) async {
+    await firestoreInstance
+        .collection("orders")
+        .doc(orderID)
+        .update({"bargain": newBargain});
+  }
+
+  static endBargain(String? orderID) async {
+    await firestoreInstance
+        .collection("orders")
+        .doc(orderID)
+        .update({"endBargain": "true"});
   }
 }

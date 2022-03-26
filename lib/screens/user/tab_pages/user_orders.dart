@@ -1,6 +1,9 @@
 import 'package:car_rental/components/car_details_dialog.dart';
 import 'package:car_rental/components/continue_dialog.dart';
+import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_exception.dart';
+import 'package:car_rental/components/custom_text_field.dart';
+import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
@@ -57,7 +60,14 @@ class UserOrders extends StatelessWidget {
   }
 }
 
-class UserOrdersStream extends StatelessWidget {
+class UserOrdersStream extends StatefulWidget {
+  @override
+  State<UserOrdersStream> createState() => _UserOrdersStreamState();
+}
+
+class _UserOrdersStreamState extends State<UserOrdersStream> {
+  final bargainController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -209,10 +219,146 @@ class UserOrdersStream extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // const SizedBox(
-                      //   width: 30.0,
-                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Bargain: ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontFamily: "Montserrat",
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10.0,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              await showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Form(
+                                      key: formKey,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text(
+                                            "Enter your new bargain.",
+                                            style: TextStyle(
+                                              // color: Color(0xff4C276C),
+                                              color: Colors.black,
+                                              fontFamily: "Montserrat",
+                                              fontSize: 16.0,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 20.0,
+                                          ),
+                                          CustomTextField(
+                                            controller: bargainController,
+                                            labelText: "Bragain",
+                                            icon: Icons.payment_outlined,
+                                            isAmount: true,
+                                            color: Colors.black,
+                                          ),
+                                          const SizedBox(
+                                            height: 20.0,
+                                          ),
+                                          CustomButton(
+                                            onPressed: () async {
+                                              if ((formKey.currentState!
+                                                  .validate())) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: const [
+                                                      CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                        backgroundColor:
+                                                            Colors.black,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                try {
+                                                  await Database.updateBargain(
+                                                    order.docID,
+                                                    bargainController.text
+                                                        .trim(),
+                                                  );
 
+                                                  navigatorKey.currentState!
+                                                      .pop();
+                                                  navigatorKey.currentState!
+                                                      .pop();
+                                                  getToast(
+                                                    message:
+                                                        "Your bargain was updated",
+                                                    color: Colors.green,
+                                                  );
+                                                } on FirebaseException catch (ex) {
+                                                  navigatorKey.currentState!
+                                                      .pop();
+                                                  navigatorKey.currentState!
+                                                      .pop();
+                                                  getToast(
+                                                    message:
+                                                        "Your bargain was not updated",
+                                                    color: Colors.red,
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            width: double.infinity,
+                                            buttonColor: Colors.black,
+                                            buttonContent: const Text(
+                                              "CONFIRM",
+                                              style: kButtonContentTextStye,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 5.0,
+                                horizontal: 15.0,
+                              ),
+                              decoration: BoxDecoration(
+                                // color: Colors.grey,
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Text(
+                                "Rs. ${order.bargain}",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16.0,
+                                  fontFamily: "Montserrat",
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10.0,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -267,6 +413,7 @@ class UserOrdersStream extends StatelessWidget {
                                       arguments: {
                                         "car": order.car,
                                         "orderID": order.docID,
+                                        "amount": order.bargain,
                                       },
                                     );
                                   },
@@ -308,7 +455,7 @@ class UserOrdersStream extends StatelessWidget {
                                             navigatorKey.currentState!.pop();
                                             return getToast(
                                               message:
-                                                  "Your order couldnot be deleted",
+                                                  "Your order was not deleted",
                                               color: Colors.red,
                                             );
                                           }

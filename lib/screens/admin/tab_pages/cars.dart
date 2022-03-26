@@ -402,7 +402,7 @@ class CarStream extends StatelessWidget {
                                             car.docID,
                                           );
                                           navigatorKey.currentState!.pop();
-                                          car.hideCar == "true"
+                                          car.hideCar == "false"
                                               ? getToast(
                                                   message:
                                                       "The car is now hidden from all users",
@@ -416,7 +416,8 @@ class CarStream extends StatelessWidget {
                                         } on CustomException catch (ex) {
                                           navigatorKey.currentState!.pop();
                                           return getToast(
-                                            message: "Car couldnot be hidden",
+                                            message:
+                                                "The process couldnot be completed",
                                             color: Colors.red,
                                           );
                                         }

@@ -32,6 +32,12 @@ class _PaymentState extends State<Payment> {
   final formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    amountController.text = widget.args!["amount"];
+    super.initState();
+  }
+
+  @override
   void dispose() {
     phoneNumberController.dispose();
     transactionPinController.dispose();
@@ -72,6 +78,7 @@ class _PaymentState extends State<Payment> {
                           icon: Icons.payment_outlined,
                           isAmount: true,
                           color: const Color(0xff4C276C),
+                          canBeEdited: false,
                         ),
                         const SizedBox(
                           height: 25.0,
@@ -120,8 +127,9 @@ class _PaymentState extends State<Payment> {
                                 initiationModel =
                                     await Khalti.service.initiatePayment(
                                   request: PaymentInitiationRequestModel(
-                                    //TODO: set amountcontroller
-                                    amount: 1000, // in paisa
+                                    // amount:
+                                    //     int.parse(amountController.text * 100),
+                                    amount: 1000,
                                     mobile: phoneNumberController.text.trim(),
                                     transactionPin:
                                         transactionPinController.text.trim(),
@@ -134,7 +142,6 @@ class _PaymentState extends State<Payment> {
                                 navigatorKey.currentState!.pop();
                                 Map<String, dynamic>? exceptionData =
                                     ex.data as Map<String, dynamic>;
-                                print(exceptionData);
                                 return getToast(
                                   message:
                                       exceptionData["tries_remaining"] == null
@@ -216,8 +223,9 @@ class _PaymentState extends State<Payment> {
                                               //TODO: delete order;
                                               await Database
                                                   .orderCompleteTransaction(
-                                                      widget.args!["orderID"],
-                                                      widget.args!["car"]);
+                                                widget.args!["orderID"],
+                                                widget.args!["car"],
+                                              );
 
                                               navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();
