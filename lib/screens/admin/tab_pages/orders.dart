@@ -355,7 +355,19 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                                           bargainController.text
                                                               .trim(),
                                                         );
-
+                                                        try {
+                                                          final token =
+                                                              await Database
+                                                                  .getToken(order
+                                                                      .placedBy);
+                                                          await NotificationHandler
+                                                              .sendNotification(
+                                                                  token: token,
+                                                                  body:
+                                                                      "The new is bargain is Rs. ${order.bargain}",
+                                                                  title:
+                                                                      "New Bargain");
+                                                        } catch (ex) {}
                                                         navigatorKey
                                                             .currentState!
                                                             .pop();

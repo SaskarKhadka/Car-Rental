@@ -12,6 +12,7 @@ import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/google_auth.dart';
+import 'package:car_rental/services/notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -326,6 +327,19 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                                           bargainController.text
                                                               .trim(),
                                                         );
+                                                        try {
+                                                          final token =
+                                                              await Database
+                                                                  .getAdminsToken();
+                                                          await NotificationHandler
+                                                              .sendNotification(
+                                                                  token:
+                                                                      token[0],
+                                                                  body:
+                                                                      "The new is bargain is Rs. ${order.bargain}",
+                                                                  title:
+                                                                      "New Bargain");
+                                                        } catch (ex) {}
 
                                                         navigatorKey
                                                             .currentState!
