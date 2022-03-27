@@ -1,19 +1,12 @@
-import 'package:car_rental/components/continue_dialog.dart';
 import 'package:car_rental/components/custom_button.dart';
-import 'package:car_rental/components/custom_text_field.dart';
 import 'package:car_rental/components/location_field.dart';
-import 'package:car_rental/components/waiting_dialog.dart';
 import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/available_cars.dart';
 import 'package:car_rental/services/authentication.dart';
-import 'package:car_rental/services/database.dart';
-import 'package:car_rental/services/google_auth.dart';
 import 'package:car_rental/state/date_state.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 // const double pinnedVisible = 0;

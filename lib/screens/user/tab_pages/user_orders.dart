@@ -93,6 +93,7 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
             );
           }
           final orders = snapshot.data!;
+          print(orders);
           return ListView.builder(
             shrinkWrap: true,
             itemCount: orders.length,
@@ -234,103 +235,118 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                             width: 10.0,
                           ),
                           GestureDetector(
-                            onTap: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (context) => Dialog(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Form(
-                                      key: formKey,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Text(
-                                            "Enter your new bargain.",
-                                            style: TextStyle(
-                                              // color: Color(0xff4C276C),
-                                              color: Colors.black,
-                                              fontFamily: "Montserrat",
-                                              fontSize: 16.0,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 20.0,
-                                          ),
-                                          CustomTextField(
-                                            controller: bargainController,
-                                            labelText: "Bragain",
-                                            icon: Icons.payment_outlined,
-                                            isAmount: true,
-                                            color: Colors.black,
-                                          ),
-                                          const SizedBox(
-                                            height: 20.0,
-                                          ),
-                                          CustomButton(
-                                            onPressed: () async {
-                                              if ((formKey.currentState!
-                                                  .validate())) {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) => Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: const [
-                                                      CircularProgressIndicator(
-                                                        color: Colors.white,
-                                                        backgroundColor:
-                                                            Colors.black,
-                                                      ),
-                                                    ],
+                            onTap: order.endBargain == "true"
+                                ? () {
+                                    getToast(
+                                      message: "Bargain has ended",
+                                      color: Colors.red,
+                                    );
+                                  }
+                                : () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) => Dialog(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Form(
+                                            key: formKey,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Text(
+                                                  "Enter your new bargain.",
+                                                  style: TextStyle(
+                                                    // color: Color(0xff4C276C),
+                                                    color: Colors.black,
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 16.0,
                                                   ),
-                                                );
-                                                try {
-                                                  await Database.updateBargain(
-                                                    order.docID,
-                                                    bargainController.text
-                                                        .trim(),
-                                                  );
+                                                ),
+                                                const SizedBox(
+                                                  height: 20.0,
+                                                ),
+                                                CustomTextField(
+                                                  controller: bargainController,
+                                                  labelText: "Bragain",
+                                                  icon: Icons.payment_outlined,
+                                                  isAmount: true,
+                                                  color: Colors.black,
+                                                ),
+                                                const SizedBox(
+                                                  height: 20.0,
+                                                ),
+                                                CustomButton(
+                                                  onPressed: () async {
+                                                    if ((formKey.currentState!
+                                                        .validate())) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: const [
+                                                            CircularProgressIndicator(
+                                                              color:
+                                                                  Colors.white,
+                                                              backgroundColor:
+                                                                  Colors.black,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                      try {
+                                                        await Database
+                                                            .updateBargain(
+                                                          order.docID,
+                                                          bargainController.text
+                                                              .trim(),
+                                                        );
 
-                                                  navigatorKey.currentState!
-                                                      .pop();
-                                                  navigatorKey.currentState!
-                                                      .pop();
-                                                  getToast(
-                                                    message:
-                                                        "Your bargain was updated",
-                                                    color: Colors.green,
-                                                  );
-                                                } on FirebaseException catch (ex) {
-                                                  navigatorKey.currentState!
-                                                      .pop();
-                                                  navigatorKey.currentState!
-                                                      .pop();
-                                                  getToast(
-                                                    message:
-                                                        "Your bargain was not updated",
-                                                    color: Colors.red,
-                                                  );
-                                                }
-                                              }
-                                            },
-                                            width: double.infinity,
-                                            buttonColor: Colors.black,
-                                            buttonContent: const Text(
-                                              "CONFIRM",
-                                              style: kButtonContentTextStye,
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        getToast(
+                                                          message:
+                                                              "Your bargain was updated",
+                                                          color: Colors.green,
+                                                        );
+                                                      } on FirebaseException catch (ex) {
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        navigatorKey
+                                                            .currentState!
+                                                            .pop();
+                                                        getToast(
+                                                          message:
+                                                              "Your bargain was not updated",
+                                                          color: Colors.red,
+                                                        );
+                                                      }
+                                                    }
+                                                  },
+                                                  width: double.infinity,
+                                                  buttonColor: Colors.black,
+                                                  buttonContent: const Text(
+                                                    "CONFIRM",
+                                                    style:
+                                                        kButtonContentTextStye,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                                    );
+                                  },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 5.0,

@@ -83,7 +83,8 @@ class AvailableCarsStream extends StatelessWidget {
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Text(
-                'You have no cars',
+                'No cars are available on the given date',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 25,
@@ -92,6 +93,20 @@ class AvailableCarsStream extends StatelessWidget {
             );
           }
           final cars = snapshot.data!;
+          cars.removeWhere((item) => item == null);
+          if (snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text(
+                'No cars are available on the given date',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                ),
+              ),
+            );
+          }
+          print(cars);
           return ListView.builder(
             shrinkWrap: true,
             itemCount: cars.length,
@@ -99,9 +114,9 @@ class AvailableCarsStream extends StatelessWidget {
             itemBuilder: (context, index) {
               final Car? car = cars[index];
 
-              if (car == null) {
-                return Container();
-              }
+              // if (car == null) {
+              //   return Container();
+              // }
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 30.0),
@@ -124,7 +139,7 @@ class AvailableCarsStream extends StatelessWidget {
                       onTap: () async {
                         await Provider.of<ImageIndexState>(context,
                                 listen: false)
-                            .resolveTotalPics(car.docID);
+                            .resolveTotalPics(car!.docID);
                         showDialog(
                           context: context,
                           builder: (context) => Dialog(
@@ -210,7 +225,7 @@ class AvailableCarsStream extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
                         child: Image.network(
-                          car.coverPicUrl,
+                          car!.coverPicUrl,
                           height: 100.0,
                           width: 100.0,
                           fit: BoxFit.fill,

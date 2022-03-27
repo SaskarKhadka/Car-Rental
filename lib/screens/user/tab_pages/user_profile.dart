@@ -60,147 +60,154 @@ class _UserProfileState extends State<UserProfile> {
                 ],
               );
             }
-            print(snapshot.data);
             User? user = snapshot.data![0];
 
             return Padding(
               padding: const EdgeInsets.only(
                 top: 30.0,
-                bottom: 30.0,
+                // bottom: 30.0,
                 right: 20.0,
                 left: 20.0,
               ),
-              child: Scrollbar(
-                thickness: 0.0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 70.0,
-                      child: GestureDetector(
-                        onTap: () async {
-                          try {
-                            final imgPicker = ImagePicker();
-                            final pickedFile = await imgPicker.pickImage(
-                                source: ImageSource.gallery);
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      shrinkWrap: true,
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 70.0,
+                          child: GestureDetector(
+                            onTap: () async {
+                              try {
+                                final imgPicker = ImagePicker();
+                                final pickedFile = await imgPicker.pickImage(
+                                    source: ImageSource.gallery);
 
-                            File? file = File(pickedFile!.path);
+                                File? file = File(pickedFile!.path);
 
-                            if (!(await file.exists())) {
-                              return;
-                            }
-                            File? croppedFile = await ImageCropper().cropImage(
-                                sourcePath: pickedFile.path,
-                                aspectRatioPresets: [
-                                  CropAspectRatioPreset.original,
-                                  CropAspectRatioPreset.ratio16x9,
-                                  CropAspectRatioPreset.ratio3x2,
-                                  CropAspectRatioPreset.square,
-                                  CropAspectRatioPreset.ratio4x3,
-                                ]);
+                                if (!(await file.exists())) {
+                                  return;
+                                }
+                                File? croppedFile = await ImageCropper()
+                                    .cropImage(
+                                        sourcePath: pickedFile.path,
+                                        aspectRatioPresets: [
+                                      CropAspectRatioPreset.original,
+                                      CropAspectRatioPreset.ratio16x9,
+                                      CropAspectRatioPreset.ratio3x2,
+                                      CropAspectRatioPreset.square,
+                                      CropAspectRatioPreset.ratio4x3,
+                                    ]);
 
-                            if (croppedFile == null) return;
+                                if (croppedFile == null) return;
 
-                            bool uploaded =
-                                await CloudStorage.uploadProfilePicture(
-                                    croppedFile);
+                                bool uploaded =
+                                    await CloudStorage.uploadProfilePicture(
+                                        croppedFile);
 
-                            if (uploaded) {
-                              getToast(
-                                  message: 'Your Profile Picture was updated',
-                                  color: Colors.green);
-                            } else {
-                              getToast(
-                                  message:
-                                      'Your Profile Picture could not be updated',
-                                  color: Colors.red);
-                            }
-                          } catch (e) {
-                            print(e);
-                            // colourController.changeColour(Colors.white54);
-                          }
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(70),
-                          child: Image.network(user!.profileUrl,
-                              fit: BoxFit.fill, height: 140, width: 140,
-                              loadingBuilder: (_, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return CircularProgressIndicator(
-                              color: Colors.black,
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            );
-                            // imageUrl: this.strImageURL,
-                          } // placeholder: new CircularProgressIndicator(),
-                              ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 35.0,
-                    ),
-                    CustomButton(
-                      onPressed: () {},
-                      borderRadius: 20.0,
-                      width: double.infinity,
-                      // buttonColor: const Color(0xffEEC776),
-                      buttonColor: Colors.white,
-                      buttonContent: Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              EvaIcons.personOutline,
-                              color: Colors.black,
-                              size: 22.0,
-                            ),
-                            const SizedBox(
-                              width: 15.0,
-                            ),
-                            Flexible(
-                              child: Text(
-                                user.name,
-                                style: const TextStyle(
+                                if (uploaded) {
+                                  getToast(
+                                      message:
+                                          'Your Profile Picture was updated',
+                                      color: Colors.green);
+                                } else {
+                                  getToast(
+                                      message:
+                                          'Your Profile Picture could not be updated',
+                                      color: Colors.red);
+                                }
+                              } catch (e) {
+                                print(e);
+                                // colourController.changeColour(Colors.white54);
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(70),
+                              child: Image.network(user!.profileUrl,
+                                  fit: BoxFit.fill, height: 140, width: 140,
+                                  loadingBuilder: (_, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return CircularProgressIndicator(
                                   color: Colors.black,
-                                  fontFamily: "Montserrat",
-                                  fontSize: 18.0,
-                                ),
-                              ),
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                );
+                                // imageUrl: this.strImageURL,
+                              } // placeholder: new CircularProgressIndicator(),
+                                  ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 25.0,
-                    ),
-                    Flexible(
-                      child: CustomButton(
-                        borderRadius: 20.0,
-                        onPressed: () {},
-                        // buttonColor: const Color(0xff8AC186),
-                        buttonColor: Colors.white,
-                        width: double.infinity,
-                        buttonContent: Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Icon(
-                                EvaIcons.emailOutline,
-                                color: Colors.black,
-                                size: 22.0,
-                              ),
-                              const SizedBox(
-                                width: 15.0,
-                              ),
-                              Flexible(
-                                child: Text(
+                        const SizedBox(
+                          height: 35.0,
+                        ),
+                        CustomButton(
+                          onPressed: () {},
+                          borderRadius: 20.0,
+                          width: double.infinity,
+                          // buttonColor: const Color(0xffEEC776),
+                          buttonColor: Colors.white,
+                          buttonContent: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  EvaIcons.personOutline,
+                                  color: Colors.black,
+                                  size: 22.0,
+                                ),
+                                const SizedBox(
+                                  width: 15.0,
+                                ),
+                                // Flexible(
+                                // child:
+                                Text(
+                                  user.name,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 25.0,
+                        ),
+                        // Flexible(
+                        // child:
+                        CustomButton(
+                          borderRadius: 20.0,
+                          onPressed: () {},
+                          // buttonColor: const Color(0xff8AC186),
+                          buttonColor: Colors.white,
+                          width: double.infinity,
+                          buttonContent: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  EvaIcons.emailOutline,
+                                  color: Colors.black,
+                                  size: 22.0,
+                                ),
+                                const SizedBox(
+                                  width: 15.0,
+                                ),
+                                // Flexible(
+                                // child:
+                                Text(
                                   user.email,
                                   style: const TextStyle(
                                     color: Colors.black,
@@ -208,339 +215,359 @@ class _UserProfileState extends State<UserProfile> {
                                     fontSize: 18.0,
                                   ),
                                 ),
-                              ),
-                            ],
+                                // ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 25.0,
-                    ),
-                    CustomButton(
-                      borderRadius: 20.0,
-                      width: double.infinity,
-                      onPressed: () {
-                        // user.phoneNumber == "Phone Number"
-                        //     ?
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Form(
-                                key: formKey,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text(
-                                      "Please enter your phone number",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: "Montserrat",
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 20.0,
-                                    ),
-                                    CustomTextField(
-                                      controller: phoneNumberController,
-                                      labelText: "Phone Number",
-                                      icon: EvaIcons.phoneCallOutline,
-                                      isPhoneNumber: true,
-                                      color: Colors.black,
-                                    ),
-                                    const SizedBox(
-                                      height: 30.0,
-                                    ),
-                                    CustomButton(
-                                      onPressed: () async {
-                                        if (formKey.currentState!.validate()) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: const [
-                                                CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                  backgroundColor: Colors.black,
+                        // ),
+                        const SizedBox(
+                          height: 25.0,
+                        ),
+                        CustomButton(
+                          borderRadius: 20.0,
+                          width: double.infinity,
+                          onPressed: () {
+                            // user.phoneNumber == "Phone Number"
+                            //     ?
+                            showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Form(
+                                    key: formKey,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Text(
+                                          "Please enter your phone number",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "Montserrat",
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 20.0,
+                                        ),
+                                        CustomTextField(
+                                          controller: phoneNumberController,
+                                          labelText: "Phone Number",
+                                          icon: EvaIcons.phoneCallOutline,
+                                          isPhoneNumber: true,
+                                          color: Colors.black,
+                                        ),
+                                        const SizedBox(
+                                          height: 30.0,
+                                        ),
+                                        CustomButton(
+                                          onPressed: () async {
+                                            if (formKey.currentState!
+                                                .validate()) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: const [
+                                                    CircularProgressIndicator(
+                                                      color: Colors.white,
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          );
-                                          try {
-                                            await Database.updatePhoneNumber(
-                                                phoneNumberController.text
-                                                    .trim());
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            getToast(
-                                              message:
-                                                  "Your phone number was updated",
-                                              color: Colors.green,
-                                            );
-                                          } on CustomException catch (ex) {
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            getToast(
-                                              message:
-                                                  "Phone Number couldnot be updated",
-                                              color: Colors.red,
-                                            );
-                                          }
-                                        }
-                                      },
-                                      width: double.infinity,
-                                      buttonColor: Colors.black,
-                                      buttonContent: const Text(
-                                        "PROCEED",
-                                        style: kButtonContentTextStye,
-                                      ),
+                                              );
+                                              try {
+                                                await Database
+                                                    .updatePhoneNumber(
+                                                        phoneNumberController
+                                                            .text
+                                                            .trim());
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                getToast(
+                                                  message:
+                                                      "Your phone number was updated",
+                                                  color: Colors.green,
+                                                );
+                                              } on CustomException catch (ex) {
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                navigatorKey.currentState!
+                                                    .pop();
+                                                getToast(
+                                                  message:
+                                                      "Phone Number couldnot be updated",
+                                                  color: Colors.red,
+                                                );
+                                              }
+                                            }
+                                          },
+                                          width: double.infinity,
+                                          buttonColor: Colors.black,
+                                          buttonContent: const Text(
+                                            "PROCEED",
+                                            style: kButtonContentTextStye,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        );
-                        // : null;
-                      },
-                      // buttonColor: const Color(0xff8969F8),
-                      // buttonColor: const Color(0xff8AC186),
-                      // buttonColor: const Color(0xff7767D8),
-                      // buttonColor: const Color(0xffFFABC7),
-                      buttonColor: Colors.white,
-
-                      buttonContent: Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              EvaIcons.phoneCallOutline,
-                              color: Colors.black,
-                              size: 22.0,
-                            ),
-                            const SizedBox(
-                              width: 15.0,
-                            ),
-                            Text(
-                              user.phoneNumber,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Montserrat",
-                                fontSize: 18.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
-                    CustomButton(
-                      onPressed: () async {
-                        final imgPicker = ImagePicker();
-                        final pickedFiles =
-                            await imgPicker.pickMultiImage() ?? [];
-
-                        if (pickedFiles.isEmpty) return;
-                        if (pickedFiles.length != 2) {
-                          return getToast(
-                            message: "You need to have exactly 2 pictures",
-                            color: Colors.red,
-                          );
-                        }
-                        showDialog(
-                          context: context,
-                          builder: (context) => Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              CircularProgressIndicator(
-                                color: Colors.white,
-                                backgroundColor: Colors.black,
-                              ),
-                            ],
-                          ),
-                        );
-                        try {
-                          await CloudStorage.lisencePics(pickedFiles);
-                          navigatorKey.currentState!.pop();
-                          return getToast(
-                            message: "Lisence pictures successfully uploaded",
-                            color: Colors.green,
-                          );
-                        } catch (ex) {
-                          navigatorKey.currentState!.pop();
-                          return getToast(
-                            message: "Your pictures were not uploaded",
-                            color: Colors.red,
-                          );
-                        }
-                      },
-                      width: double.infinity,
-                      buttonColor: Colors.green,
-                      borderRadius: 20.0,
-                      buttonContent: Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              EvaIcons.uploadOutline,
-                              color: Colors.black,
-                              size: 22.0,
-                            ),
-                            SizedBox(
-                              width: 15.0,
-                            ),
-                            Flexible(
-                              child: Text(
-                                "Lisence (both sides)",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Montserrat",
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
-                    CustomButton(
-                      onPressed: () async {
-                        final imgPicker = ImagePicker();
-                        final pickedFiles =
-                            await imgPicker.pickMultiImage() ?? [];
-
-                        if (pickedFiles.isEmpty) return;
-                        if (pickedFiles.length != 2) {
-                          return getToast(
-                            message: "You need to have exactly 2 pictures",
-                            color: Colors.red,
-                          );
-                        }
-                        showDialog(
-                          context: context,
-                          builder: (context) => Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              CircularProgressIndicator(
-                                color: Colors.white,
-                                backgroundColor: Colors.black,
-                              ),
-                            ],
-                          ),
-                        );
-                        try {
-                          await CloudStorage.citizenshipPics(pickedFiles);
-                          navigatorKey.currentState!.pop();
-                          return getToast(
-                            message:
-                                "Citizenship pictures successfully uploaded",
-                            color: Colors.green,
-                          );
-                        } catch (ex) {
-                          navigatorKey.currentState!.pop();
-                          return getToast(
-                            message: "Your pictures were not uploaded",
-                            color: Colors.red,
-                          );
-                        }
-                      },
-                      width: double.infinity,
-                      borderRadius: 20.0,
-                      buttonColor: Colors.green,
-                      buttonContent: Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              EvaIcons.uploadOutline,
-                              color: Colors.black,
-                              size: 22.0,
-                            ),
-                            SizedBox(
-                              width: 15.0,
-                            ),
-                            Text(
-                              "Citizenship (both sides)",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Montserrat",
-                                fontSize: 16.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15.0,
-                        horizontal: 25.0,
-                      ),
-                      // width: MediaQuery.of(context).size.width * 0.35,
-                      // height: 50.0,
-                      decoration: BoxDecoration(
-                        color: const Color(0xff8969F8),
-                        borderRadius: BorderRadius.circular(15.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.white30,
-                            blurRadius: 10.0,
-                            spreadRadius: 5.0,
-                            // offset: Offset(7, 7),
-                          ),
-                        ],
-                      ),
-                      child: GestureDetector(
-                        onTap: () async {
-                          try {
-                            await GoogleAuthentication.signOut();
-                            await Authentication.signOut();
-                            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                                Signin.id, (route) => false);
-                          } on PlatformException catch (ex) {
-                            await Authentication.signOut();
-                            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                                Signin.id, (route) => false);
-                          } on CustomException catch (ex) {
-                            getToast(
-                              message: "Couldnot sign out",
-                              color: Colors.red,
                             );
-                          }
-                        },
-                        child: const Text(
-                          "Sign Out",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Montserrat",
-                            fontSize: 20.0,
+                            // : null;
+                          },
+                          // buttonColor: const Color(0xff8969F8),
+                          // buttonColor: const Color(0xff8AC186),
+                          // buttonColor: const Color(0xff7767D8),
+                          // buttonColor: const Color(0xffFFABC7),
+                          buttonColor: Colors.white,
+
+                          buttonContent: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  EvaIcons.phoneCallOutline,
+                                  color: Colors.black,
+                                  size: 22.0,
+                                ),
+                                const SizedBox(
+                                  width: 15.0,
+                                ),
+                                Text(
+                                  user.phoneNumber,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 30.0,
+                        ),
+                        CustomButton(
+                          onPressed: () async {
+                            final imgPicker = ImagePicker();
+                            final pickedFiles =
+                                await imgPicker.pickMultiImage() ?? [];
+
+                            if (pickedFiles.isEmpty) return;
+                            if (pickedFiles.length != 2) {
+                              return getToast(
+                                message: "You need to have exactly 2 pictures",
+                                color: Colors.red,
+                              );
+                            }
+                            showDialog(
+                              context: context,
+                              builder: (context) => Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(
+                                    color: Colors.white,
+                                    backgroundColor: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            );
+                            try {
+                              await CloudStorage.lisencePics(pickedFiles);
+                              navigatorKey.currentState!.pop();
+                              return getToast(
+                                message:
+                                    "Lisence pictures successfully uploaded",
+                                color: Colors.green,
+                              );
+                            } catch (ex) {
+                              navigatorKey.currentState!.pop();
+                              return getToast(
+                                message: "Your pictures were not uploaded",
+                                color: Colors.red,
+                              );
+                            }
+                          },
+                          width: double.infinity,
+                          buttonColor: Colors.green,
+                          borderRadius: 20.0,
+                          buttonContent: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  EvaIcons.uploadOutline,
+                                  color: Colors.black,
+                                  size: 22.0,
+                                ),
+                                SizedBox(
+                                  width: 15.0,
+                                ),
+                                // Flexible(
+                                // child:
+                                Text(
+                                  "Lisence (both sides)",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30.0,
+                        ),
+                        CustomButton(
+                          onPressed: () async {
+                            final imgPicker = ImagePicker();
+                            final pickedFiles =
+                                await imgPicker.pickMultiImage() ?? [];
+
+                            if (pickedFiles.isEmpty) return;
+                            if (pickedFiles.length != 2) {
+                              return getToast(
+                                message: "You need to have exactly 2 pictures",
+                                color: Colors.red,
+                              );
+                            }
+                            showDialog(
+                              context: context,
+                              builder: (context) => Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(
+                                    color: Colors.white,
+                                    backgroundColor: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            );
+                            try {
+                              await CloudStorage.citizenshipPics(pickedFiles);
+                              navigatorKey.currentState!.pop();
+                              return getToast(
+                                message:
+                                    "Citizenship pictures successfully uploaded",
+                                color: Colors.green,
+                              );
+                            } catch (ex) {
+                              navigatorKey.currentState!.pop();
+                              return getToast(
+                                message: "Your pictures were not uploaded",
+                                color: Colors.red,
+                              );
+                            }
+                          },
+                          width: double.infinity,
+                          borderRadius: 20.0,
+                          buttonColor: Colors.green,
+                          buttonContent: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  EvaIcons.uploadOutline,
+                                  color: Colors.black,
+                                  size: 22.0,
+                                ),
+                                SizedBox(
+                                  width: 15.0,
+                                ),
+                                Text(
+                                  "Citizenship (both sides)",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30.0,
+                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15.0,
+                                horizontal: 25.0,
+                              ),
+                              // width: MediaQuery.of(context).size.width * 0.35,
+                              // height: 50.0,
+                              decoration: BoxDecoration(
+                                color: const Color(0xff8969F8),
+                                borderRadius: BorderRadius.circular(15.0),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.white30,
+                                    blurRadius: 10.0,
+                                    spreadRadius: 5.0,
+                                    // offset: Offset(7, 7),
+                                  ),
+                                ],
+                              ),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    await GoogleAuthentication.signOut();
+                                    await Authentication.signOut();
+                                    navigatorKey.currentState!
+                                        .pushNamedAndRemoveUntil(
+                                            Signin.id, (route) => false);
+                                  } on PlatformException catch (ex) {
+                                    await Authentication.signOut();
+                                    navigatorKey.currentState!
+                                        .pushNamedAndRemoveUntil(
+                                            Signin.id, (route) => false);
+                                  } on CustomException catch (ex) {
+                                    getToast(
+                                      message: "Couldnot sign out",
+                                      color: Colors.red,
+                                    );
+                                  }
+                                },
+                                child: const Text(
+                                  "Sign Out",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }),

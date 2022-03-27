@@ -296,8 +296,10 @@ class _SignupState extends State<Signup> {
                                                             .pop();
                                                         navigatorKey
                                                             .currentState!
-                                                            .pushNamed(
-                                                                Signin.id);
+                                                            .pushNamedAndRemoveUntil(
+                                                                UserHomePage.id,
+                                                                (route) =>
+                                                                    false);
 
                                                         getToast(
                                                           message:
@@ -318,7 +320,7 @@ class _SignupState extends State<Signup> {
                                                         getToast(
                                                           message:
                                                               'Your email has not been verified',
-                                                          color: Colors.green,
+                                                          color: Colors.red,
                                                         );
                                                       }
                                                     },
@@ -339,8 +341,10 @@ class _SignupState extends State<Signup> {
                                                             .sendEmailVerification();
                                                       } on CustomException catch (ex) {
                                                         getToast(
-                                                            message:
-                                                                'Too many requests.Please, try again later.');
+                                                          message:
+                                                              'Too many requests.Please, try again later.',
+                                                          color: Colors.red,
+                                                        );
                                                       }
                                                     },
                                                   ),
