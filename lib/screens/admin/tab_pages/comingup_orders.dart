@@ -194,6 +194,17 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                   height: 12.0,
                                 ),
                                 Text(
+                                  "Time: ${order.pickUpTime}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                    fontFamily: "Montserrat",
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 12.0,
+                                ),
+                                Text(
                                   "Location: ${order.pickUpLocation}",
                                   style: const TextStyle(
                                     color: Colors.white,
@@ -228,6 +239,17 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                 ),
                                 Text(
                                   "Date: ${order.dropOffDate}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                    fontFamily: "Montserrat",
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 12.0,
+                                ),
+                                Text(
+                                  "Time: ${order.dropOffTime}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,

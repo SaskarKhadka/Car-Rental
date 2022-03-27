@@ -11,6 +11,7 @@ import 'package:car_rental/state/car_state.dart';
 import 'package:car_rental/state/card_index_date.dart';
 import 'package:car_rental/state/date_state.dart';
 import 'package:car_rental/state/image_index_state.dart';
+import 'package:car_rental/state/time_state.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class CarRental extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PasswordEyeState()),
         ChangeNotifierProvider(create: (context) => CarState()),
         ChangeNotifierProvider(create: (context) => DateState()),
+        ChangeNotifierProvider(create: (context) => TimeState()),
         ChangeNotifierProvider(create: (context) => CarPicsState()),
         ChangeNotifierProvider(create: (context) => ImageIndexState()),
         ChangeNotifierProvider(create: (context) => CardIndexState()),

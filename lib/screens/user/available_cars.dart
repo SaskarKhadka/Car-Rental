@@ -415,7 +415,7 @@ class AvailableCarsStream extends StatelessWidget {
                                                     .getAdminsToken();
                                                 await NotificationHandler
                                                     .sendNotification(
-                                                  token: tokens[0]!,
+                                                  token: tokens[0],
                                                   body: "You have a new order",
                                                   title: "New Order",
                                                 );

@@ -176,11 +176,11 @@ class _SigninState extends State<Signin> {
                                       getToast(
                                           message: "Login successful",
                                           color: Colors.green);
-                                    } on Exception catch (ex) {
+                                    } on CustomException catch (ex) {
                                       navigatorKey.currentState!.pop();
                                       getToast(
                                           message:
-                                              "Invalid username or passowrd",
+                                              "Invalid username or password",
                                           color: Colors.red);
                                       print(ex.toString().split(". ")[0] + ".");
                                     }
@@ -223,7 +223,11 @@ class _SigninState extends State<Signin> {
                                   try {
                                     await GoogleAuthentication.signIn(
                                         googleAccount);
-                                    await NotificationHandler.resolveToken();
+                                    try {
+                                      await NotificationHandler.resolveToken();
+                                    } catch (ex) {
+                                      print(ex.toString());
+                                    }
                                     // navigatorKey.currentState!
                                     //     .pushNamed(UserHomePage.id);
                                     // getToast(
@@ -261,7 +265,7 @@ class _SigninState extends State<Signin> {
                                           color: Colors.green,
                                         );
                                       }
-                                    } on Exception catch (ex) {
+                                    } catch (ex) {
                                       await Authentication.deleteUser();
                                       await GoogleAuthentication.signOut();
                                       return getToast(
@@ -269,7 +273,7 @@ class _SigninState extends State<Signin> {
                                         color: Colors.red,
                                       );
                                     }
-                                  } on Exception catch (ex) {
+                                  } on CustomException catch (ex) {
                                     navigatorKey.currentState!.pop();
                                     getToast(
                                         message: "Account already exists",

@@ -148,7 +148,7 @@ class _EditCar extends State<EditCar> {
                         navigatorKey.currentState!.pop();
                         getToast(
                             message: "Update successful", color: Colors.green);
-                      } on Exception catch (ex) {
+                      } catch (ex) {
                         getToast(
                             message: "Update not successful",
                             color: Colors.red);

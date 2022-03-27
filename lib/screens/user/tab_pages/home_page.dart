@@ -6,126 +6,9 @@ import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/available_cars.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/state/date_state.dart';
+import 'package:car_rental/state/time_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-// const double pinnedVisible = 0;
-// const double pinnedInvisible = -250;
-
-// class HomePage extends StatefulWidget {
-// static const String id = "/homePage";
-
-//   const HomePage();
-
-//   @override
-//   _HomePageState createState() => _HomePageState();
-// }
-
-// class _HomePageState extends State<HomePage> {
-//   DateTime? _pickedDate;
-//   List<Marker>? markers = [];
-//   BitmapDescriptor? usericon;
-//   GoogleMapController? _mapController;
-
-// String? pickUpDate;
-// String? dropOffDate;
-
-//   void setIcon() async {
-//     usericon = await BitmapDescriptor.fromAssetImage(
-//         const ImageConfiguration(), 'images/blue.png');
-//   }
-
-//   void _setMapStyle() async {
-//     String style = await DefaultAssetBundle.of(context)
-//         .loadString('images/map_style.json');
-//     _mapController!.setMapStyle(style);
-//   }
-
-//   void _onMapCreated(GoogleMapController controller) {
-//     _mapController = controller;
-//     _setMapStyle();
-//   }
-
-//   @override
-//   void dispose() {
-//     _mapController!.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   void initState() {
-//     // _distanceValue = '250 meter';
-//     // _distanceValueNum = _distanceMap[_distanceValue];
-//     _pickedDate = DateTime.now();
-
-//     super.initState();
-
-//     markers!.add(
-//       Marker(
-//         markerId: const MarkerId('user'),
-//         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-//         position: const LatLng(27.6915, 85.3420),
-//       ),
-//     );
-
-//     setIcon();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     Size size = MediaQuery.of(context).size;
-//     return Scaffold(
-//       body: Stack(
-//         children: [
-//           GoogleMap(
-//             onMapCreated: _onMapCreated,
-//             initialCameraPosition: const CameraPosition(
-//                 target: LatLng(27.6915, 85.3420), zoom: 16),
-//             mapType: MapType.normal,
-//             markers: Set.from(markers!),
-//             // circles: Set.from(_circles),
-//             zoomControlsEnabled: true,
-//             // myLocationEnabled: true,
-//             myLocationButtonEnabled: true,
-//             onTap: (LatLng latLng) {
-//               // setState(() {});
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-// _pickDate(bool? isPickUpDate) async {
-//   DateTime? date = await showDatePicker(
-//     context: context,
-//     initialDate: _pickedDate!,
-//     firstDate: DateTime(
-//       DateTime.now().year,
-//       DateTime.now().month,
-//       DateTime.now().day,
-//     ),
-//     lastDate: DateTime(
-//       DateTime.now().year,
-//       DateTime.now().month,
-//       DateTime.now().day + 29,
-//     ),
-//     // lastDate: DateTime(DateTime.now().month + 5),
-//   );
-//   if (date != null) {
-//     setState(() {
-//       _pickedDate = date;
-//       if (isPickUpDate!) {
-//         pickUpDate =
-//             "${_pickedDate!.year}/${_pickedDate!.month}/${_pickedDate!.day}";
-//       } else {
-//         dropOffDate =
-//             "${_pickedDate!.year}/${_pickedDate!.month}/${_pickedDate!.day}";
-//       }
-//     });
-//   }
-// }
-// }
 
 class HomePage extends StatefulWidget {
   static const String id = "/homePage";
@@ -247,6 +130,39 @@ class _HomePageState extends State<HomePage> {
                   child: GestureDetector(
                     child: ListTile(
                       title: Text(
+                        "Pickup Time: ${Provider.of<TimeState>(context, listen: true).pickUpTime}",
+                        style: const TextStyle(
+                          fontFamily: "Montserrat",
+                          fontSize: 16.0,
+                          letterSpacing: 1.3,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xffaaabac),
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Color(0xffaaabac),
+                      ),
+                    ),
+                    onTap: () {
+                      // GoogleAuthentication.signOut();
+                      // Authentication.signOut();
+                      // return;
+                      _pickTime(context, true);
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 15.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    color: const Color(0xff101010),
+                  ),
+                  child: GestureDetector(
+                    child: ListTile(
+                      title: Text(
                         "Dropoff Date: ${Provider.of<DateState>(context, listen: true).dropOffDate}",
                         style: const TextStyle(
                           fontFamily: "Montserrat",
@@ -267,6 +183,40 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
+                const SizedBox(
+                  height: 15.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    color: const Color(0xff101010),
+                  ),
+                  child: GestureDetector(
+                    child: ListTile(
+                      title: Text(
+                        "Dropoff Time: ${Provider.of<TimeState>(context, listen: true).dropOffTime}",
+                        style: const TextStyle(
+                          fontFamily: "Montserrat",
+                          fontSize: 16.0,
+                          letterSpacing: 1.3,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xffaaabac),
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Color(0xffaaabac),
+                      ),
+                    ),
+                    onTap: () {
+                      // GoogleAuthentication.signOut();
+                      // Authentication.signOut();
+                      // return;
+                      _pickTime(context, false);
+                    },
+                  ),
+                ),
+
                 const SizedBox(
                   height: 30.0,
                 ),
@@ -350,6 +300,14 @@ class _HomePageState extends State<HomePage> {
                                 scaffoldKey!.currentContext!,
                                 listen: false)
                             .dropOffDate,
+                        "pickUpTime": Provider.of<TimeState>(
+                                scaffoldKey!.currentContext!,
+                                listen: false)
+                            .pickUpTime,
+                        "dropOffTime": Provider.of<TimeState>(
+                                scaffoldKey!.currentContext!,
+                                listen: false)
+                            .dropOffTime,
                         "pickUpLocation": pickUpLocationController.text.trim(),
                         "dropOffLocation":
                             dropOffLocationController.text.trim(),
@@ -377,13 +335,11 @@ class _HomePageState extends State<HomePage> {
       ),
       lastDate: DateTime(
         DateTime.now().year,
-        DateTime.now().month + 1,
+        DateTime.now().month + 2,
         DateTime.now().day,
       ),
-      // lastDate: DateTime(DateTime.now().month + 5),
     );
     if (date != null) {
-      // _pickedDate = date;
       if (isPickUpDate!) {
         Provider.of<DateState>(context, listen: false)
             .updatePickUpDate("${date.year}/${date.month}/${date.day}");
@@ -393,26 +349,26 @@ class _HomePageState extends State<HomePage> {
       }
     }
   }
-}
 
-Future<void> selectedItem(BuildContext context, int item) async {
-  switch (item) {
-    case 0:
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => AboutPage()),
-      // );
-      break;
-    case 1:
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HelpPage()),
-      // );
-      break;
-    case 2:
-      await Authentication.signOut();
-      navigatorKey.currentState!
-          .pushNamedAndRemoveUntil(Signin.id, (route) => false);
-      break;
+  Future<void> _pickTime(BuildContext context, bool? isPickUpTime) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (BuildContext context, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child!,
+          );
+        });
+
+    if (pickedTime != null) {
+      if (isPickUpTime!) {
+        Provider.of<TimeState>(context, listen: false).updatePickUpTime(
+            "${pickedTime.hourOfPeriod}:${pickedTime.minute} ${pickedTime.period.name}");
+      } else {
+        Provider.of<TimeState>(context, listen: false).updateDropOffTime(
+            "${pickedTime.hourOfPeriod}:${pickedTime.minute} ${pickedTime.period.name}");
+      }
+    }
   }
 }

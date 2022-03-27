@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:car_rental/components/custom_button.dart';
+import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/components/waiting_dialog.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/signin_screen.dart';
@@ -218,13 +219,19 @@ class _AddNewCarState extends State<AddNewCar> {
                           message: "New car added",
                           color: Colors.green,
                         );
-                      } on Exception catch (ex) {
+                      } on CustomException catch (ex) {
                         navigatorKey.currentState!.pop();
                         getToast(
                           message: "Car couldnot be added",
                           color: Colors.red,
                         );
-                        print(ex.toString().split(". ")[0] + ".");
+                        // print(ex.toString().split(". ")[0] + ".");
+                      } catch (ex) {
+                        navigatorKey.currentState!.pop();
+                        getToast(
+                          message: "Car couldnot be added",
+                          color: Colors.red,
+                        );
                       }
                     }
                   },

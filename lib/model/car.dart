@@ -33,6 +33,7 @@ class Car {
     required this.registrationNumber,
     required this.coverPicUrl,
     required this.picsUrl,
+    required this.hideCar,
   });
 
   Map<String, dynamic> get toJson => {
@@ -45,5 +46,6 @@ class Car {
         "registrationNumber": registrationNumber,
         "coverPicUrl": coverPicUrl,
         "picsUrl": picsUrl,
+        "hideCar": hideCar,
       };
 }

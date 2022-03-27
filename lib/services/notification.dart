@@ -61,8 +61,11 @@ class NotificationHandler {
     });
   }
 
-  static Future<void> sendNotification(
-      {String? token, String? body, String? title}) async {
+  static Future<void> sendNotification({
+    String? token,
+    String? body,
+    String? title,
+  }) async {
     try {
       await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
           headers: <String, String>{
@@ -81,7 +84,7 @@ class NotificationHandler {
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "status": "done"
               },
-              "to": "$token"
+              "to": token,
             },
           ));
       print('FCM request for device sent!');

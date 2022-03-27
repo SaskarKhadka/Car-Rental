@@ -2,11 +2,13 @@ class Order {
   late String docID;
   late String pickUpDate;
   late String dropOffDate;
+  late String pickUpTime;
+  late String dropOffTime;
   late String pickUpLocation;
   late String dropOffLocation;
   late String timeStamp;
   late String placedBy;
-  late String paidAmount;
+  // late String paidAmount;
   late String car;
   late String bargain;
   late String endBargain;
@@ -15,9 +17,11 @@ class Order {
       {required Map<String, dynamic> orderData, required String? id}) {
     docID = id!;
     car = orderData["car"];
-    paidAmount = orderData["paidAmount"] ?? "0";
+    // paidAmount = orderData["paidAmount"] ?? "0";
     pickUpDate = orderData["pickUpDate"];
     dropOffDate = orderData["dropOffDate"];
+    pickUpTime = orderData["pickUpTime"];
+    dropOffTime = orderData["dropOffTime"];
     pickUpLocation = orderData["pickUpLocation"];
     dropOffLocation = orderData["dropOffLocation"];
     timeStamp = orderData["timestamp"];
@@ -36,6 +40,10 @@ class Order {
     required this.placedBy,
     required this.bargain,
     required this.endBargain,
+    required this.dropOffTime,
+    required this.car,
+    // required this.paidAmount,
+    required this.pickUpTime,
   });
 
   Map<String, dynamic> get toJson => {
@@ -47,5 +55,9 @@ class Order {
         "timeStamp": timeStamp,
         "placedBy": placedBy,
         "bargain": bargain,
+        "endBargain": endBargain,
+        "car": car,
+        "pickUpTime": pickUpTime,
+        "dropOffTime": dropOffTime,
       };
 }

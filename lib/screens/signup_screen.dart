@@ -271,7 +271,7 @@ class _SignupState extends State<Signup> {
                                                                       .trim(),
                                                             },
                                                           );
-                                                        } on Exception catch (ex) {
+                                                        } catch (ex) {
                                                           await Authentication
                                                               .deleteUser();
                                                           await Authentication
@@ -354,7 +354,7 @@ class _SignupState extends State<Signup> {
                                           );
                                         },
                                       );
-                                    } on Exception catch (ex) {
+                                    } on CustomException catch (ex) {
                                       navigatorKey.currentState!.pop();
                                       getToast(
                                           message: "Account already exists",

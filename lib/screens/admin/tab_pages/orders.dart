@@ -17,6 +17,7 @@ import 'package:car_rental/services/google_auth.dart';
 import 'package:car_rental/services/notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -187,6 +188,17 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                   height: 12.0,
                                 ),
                                 Text(
+                                  "Time: ${order.pickUpTime}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                    fontFamily: "Montserrat",
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 12.0,
+                                ),
+                                Text(
                                   "Location: ${order.pickUpLocation}",
                                   style: const TextStyle(
                                     color: Colors.white,
@@ -221,6 +233,17 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                 ),
                                 Text(
                                   "Date: ${order.dropOffDate}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                    fontFamily: "Montserrat",
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 12.0,
+                                ),
+                                Text(
+                                  "Time: ${order.dropOffTime}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
@@ -427,6 +450,20 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                             await Database.endBargain(
                                                 order.docID);
                                             navigatorKey.currentState!.pop();
+                                            try {
+                                              final token =
+                                                  await Database.getToken(
+                                                      order.placedBy);
+                                              await NotificationHandler
+                                                  .sendNotification(
+                                                token: token,
+                                                body:
+                                                    "Your bargain has ended for Rs.${order.bargain}",
+                                                title: "Bargain Ended",
+                                              );
+                                            } catch (ex) {
+                                              print(ex.toString());
+                                            }
                                             getToast(
                                               message:
                                                   "The bargain is now ended",

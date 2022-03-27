@@ -446,7 +446,7 @@ class Database {
     await userRef.update({"token": token});
   }
 
-  static Future<List<String?>> getAdminsToken() async {
+  static Future<List<String>> getAdminsToken() async {
     final querySnap = await firestoreInstance
         .collection("users")
         .where(
@@ -454,10 +454,14 @@ class Database {
           isEqualTo: true,
         )
         .get();
-    return querySnap.docs.map((queryDocSnap) {
-      final data = queryDocSnap.data();
-      if (data["token"] != null) return data["token"] as String;
-    }).toList();
+    List<String> tokens = [];
+    for (final each in querySnap.docs) {
+      final data = each.data();
+      if (data["token"] != null) {
+        tokens.add(data["token"]);
+      }
+    }
+    return tokens;
   }
 
   static Future<String?> getToken(String? uid) async {
