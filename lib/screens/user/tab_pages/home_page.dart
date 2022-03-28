@@ -1,14 +1,14 @@
 import 'package:car_rental/components/custom_button.dart';
-import 'package:car_rental/components/location_field.dart';
 import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
+import 'package:car_rental/model/places.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/available_cars.dart';
-import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/state/date_state.dart';
 import 'package:car_rental/state/time_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:searchfield/searchfield.dart';
 
 class HomePage extends StatefulWidget {
   static const String id = "/homePage";
@@ -23,6 +23,12 @@ class _HomePageState extends State<HomePage> {
   final dropOffLocationController = TextEditingController();
   final GlobalKey<FormState>? formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState>? scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    pickUpLocationController.text = places[0];
+    dropOffLocationController.text = places[1];
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -233,21 +239,164 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 15.0,
                 ),
+
                 Form(
                   key: formKey,
                   child: Column(
                     children: [
-                      LocationCustomTextField(
-                          controller: pickUpLocationController,
-                          labelText: "Pickup Location",
-                          icon: Icons.location_on_outlined),
+                      SearchField(
+                        controller: pickUpLocationController,
+                        suggestions: places
+                            .map((e) => SearchFieldListItem(
+                                  e,
+                                  child: SizedBox(
+                                    height: 100,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          e,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "Montserrat",
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  item: e,
+                                ))
+                            .toList(),
+
+                        suggestionState: Suggestion.expand,
+                        searchInputDecoration: InputDecoration(
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Icon(
+                              Icons.location_on_outlined,
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                          label: const Text(
+                            "Pickup Location",
+                          ),
+                          labelStyle: kTextFieldLabelStyle.copyWith(
+                            color: const Color(0xffaaabac),
+                          ),
+                          disabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                        ),
+                        // textInputAction: TextInputAction.next,
+                        hasOverlay: false,
+                        searchStyle: kTextFieldTextStyle.copyWith(
+                          color: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Required";
+                          } else if (!places.contains(value)) {
+                            return "Invalid location";
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
                       const SizedBox(
                         height: 15.0,
                       ),
-                      LocationCustomTextField(
+                      SearchField(
                         controller: dropOffLocationController,
-                        labelText: "Dropoff Location",
-                        icon: Icons.location_on_outlined,
+                        suggestions: places
+                            .map((e) => SearchFieldListItem(
+                                  e,
+                                  child: SizedBox(
+                                    height: 100,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          e,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "Montserrat",
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  item: e,
+                                ))
+                            .toList(),
+                        // initialValue: SearchFieldListItem(
+                        //   places[0],
+                        //   item: places[0],
+                        // ),
+                        suggestionState: Suggestion.expand,
+                        searchInputDecoration: InputDecoration(
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Icon(
+                              Icons.location_on_outlined,
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                          label: const Text(
+                            "Dropoff Location",
+                          ),
+                          labelStyle: kTextFieldLabelStyle.copyWith(
+                            color: const Color(0xffaaabac),
+                          ),
+                          disabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffaaabac),
+                            ),
+                          ),
+                        ),
+                        // textInputAction: TextInputAction.next,
+                        hasOverlay: false,
+                        searchStyle: kTextFieldTextStyle.copyWith(
+                          color: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Required";
+                          } else if (!places.contains(value)) {
+                            return "Invalid location";
+                          } else {
+                            return null;
+                          }
+                        },
                       ),
                     ],
                   ),
