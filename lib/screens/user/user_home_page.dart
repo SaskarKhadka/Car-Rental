@@ -42,10 +42,10 @@ class _UserHomePageState extends State<UserHomePage>
         physics: const NeverScrollableScrollPhysics(),
         // dragStartBehavior: DragStartBehavior.down,
         controller: tabController,
-        children: const [
+        children: [
           HomePage(),
-          UserOrders(),
-          UserProfile(),
+          const UserOrders(),
+          const UserProfile(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

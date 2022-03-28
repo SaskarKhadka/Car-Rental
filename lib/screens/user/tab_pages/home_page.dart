@@ -4,38 +4,18 @@ import 'package:car_rental/main.dart';
 import 'package:car_rental/model/places.dart';
 import 'package:car_rental/screens/signin_screen.dart';
 import 'package:car_rental/screens/user/available_cars.dart';
+import 'package:car_rental/screens/user/maps_screen.dart';
 import 'package:car_rental/state/date_state.dart';
 import 'package:car_rental/state/time_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:searchfield/searchfield.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   static const String id = "/homePage";
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final pickUpLocationController = TextEditingController();
-  final dropOffLocationController = TextEditingController();
-  final GlobalKey<FormState>? formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState>? scaffoldKey = GlobalKey<ScaffoldState>();
-  @override
-  void initState() {
-    // pickUpLocationController.text = places[0];
-    // dropOffLocationController.text = places[1];
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    pickUpLocationController.dispose();
-    dropOffLocationController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,23 +42,22 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: "Montserrat",
-                    fontSize: 30.0,
+                    fontSize: 40.0,
                     fontWeight: FontWeight.w700,
                     color: Color(0xffECECEC),
                     letterSpacing: 1.5,
                   ),
                 ),
-                // const Center(
-                //   child: Image(
-                //     image: AssetImage('images/vector.png'),
-                //     height: 250,
-                //     width: 250,
-                //   ),
-                // ),
+                const Center(
+                  child: Image(
+                    image: AssetImage('images/vector.png'),
+                    height: 250,
+                    width: 250,
+                  ),
+                ),
                 // const SizedBox(
                 //   height: 15.0,
                 // ),
-
                 const SizedBox(
                   height: 30.0,
                 ),
@@ -222,190 +201,11 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-
                 const SizedBox(
                   height: 30.0,
                 ),
-                const Text(
-                  'Where would you like us to come?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: "Montserrat",
-                    fontSize: 15.0,
-                    // fontWeight: FontWeight.w700,
-                    color: Color(0xffaaabac),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15.0,
-                ),
-
-                Form(
-                  key: formKey,
-                  child: Column(
-                    children: [
-                      SearchField(
-                        controller: pickUpLocationController,
-                        suggestions: places
-                            .map((e) => SearchFieldListItem(
-                                  e,
-                                  child: SizedBox(
-                                    height: 100,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          e,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: "Montserrat",
-                                            fontSize: 16.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  item: e,
-                                ))
-                            .toList(),
-
-                        suggestionState: Suggestion.expand,
-                        searchInputDecoration: InputDecoration(
-                          prefixIcon: const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Icon(
-                              Icons.location_on_outlined,
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                          label: const Text(
-                            "Pickup Location",
-                          ),
-                          labelStyle: kTextFieldLabelStyle.copyWith(
-                            color: const Color(0xffaaabac),
-                          ),
-                          disabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                        ),
-                        // textInputAction: TextInputAction.next,
-                        hasOverlay: false,
-                        searchStyle: kTextFieldTextStyle.copyWith(
-                          color: Colors.white,
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Required";
-                          } else if (!places.contains(value)) {
-                            return "Invalid location";
-                          } else {
-                            return null;
-                          }
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15.0,
-                      ),
-                      SearchField(
-                        controller: dropOffLocationController,
-                        suggestions: places
-                            .map((e) => SearchFieldListItem(
-                                  e,
-                                  child: SizedBox(
-                                    height: 100,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          e,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: "Montserrat",
-                                            fontSize: 16.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  item: e,
-                                ))
-                            .toList(),
-                        // initialValue: SearchFieldListItem(
-                        //   places[0],
-                        //   item: places[0],
-                        // ),
-                        suggestionState: Suggestion.expand,
-                        searchInputDecoration: InputDecoration(
-                          prefixIcon: const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Icon(
-                              Icons.location_on_outlined,
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                          label: const Text(
-                            "Dropoff Location",
-                          ),
-                          labelStyle: kTextFieldLabelStyle.copyWith(
-                            color: const Color(0xffaaabac),
-                          ),
-                          disabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xffaaabac),
-                            ),
-                          ),
-                        ),
-                        // textInputAction: TextInputAction.next,
-                        hasOverlay: false,
-                        searchStyle: kTextFieldTextStyle.copyWith(
-                          color: Colors.white,
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Required";
-                          } else if (!places.contains(value)) {
-                            return "Invalid location";
-                          } else {
-                            return null;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 30.0,
-                ),
-                CustomButtonGray(
-                  // color: Colors.white,
+                CustomButton(
+                  buttonColor: const Color(0xffaaabac),
                   buttonContent: Text(
                     "CONFIRM",
                     style: kButtonContentTextStye.copyWith(
@@ -438,30 +238,25 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.red,
                       );
                     }
-                    if (formKey!.currentState!.validate()) {
-                      navigatorKey.currentState!
-                          .pushNamed(AvailableCars.id, arguments: {
-                        "pickUpDate": Provider.of<DateState>(
-                                scaffoldKey!.currentContext!,
-                                listen: false)
-                            .pickUpDate,
-                        "dropOffDate": Provider.of<DateState>(
-                                scaffoldKey!.currentContext!,
-                                listen: false)
-                            .dropOffDate,
-                        "pickUpTime": Provider.of<TimeState>(
-                                scaffoldKey!.currentContext!,
-                                listen: false)
-                            .pickUpTime,
-                        "dropOffTime": Provider.of<TimeState>(
-                                scaffoldKey!.currentContext!,
-                                listen: false)
-                            .dropOffTime,
-                        "pickUpLocation": pickUpLocationController.text.trim(),
-                        "dropOffLocation":
-                            dropOffLocationController.text.trim(),
-                      });
-                    }
+                    navigatorKey.currentState!
+                        .pushNamed(MapsPage.id, arguments: {
+                      "pickUpDate": Provider.of<DateState>(
+                              scaffoldKey!.currentContext!,
+                              listen: false)
+                          .pickUpDate,
+                      "dropOffDate": Provider.of<DateState>(
+                              scaffoldKey!.currentContext!,
+                              listen: false)
+                          .dropOffDate,
+                      "pickUpTime": Provider.of<TimeState>(
+                              scaffoldKey!.currentContext!,
+                              listen: false)
+                          .pickUpTime,
+                      "dropOffTime": Provider.of<TimeState>(
+                              scaffoldKey!.currentContext!,
+                              listen: false)
+                          .dropOffTime,
+                    });
                   },
                   // color: Colors.red,
                 ),

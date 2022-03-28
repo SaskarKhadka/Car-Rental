@@ -1,17 +1,12 @@
 import 'dart:io';
-
-import 'package:car_rental/components/continue_dialog.dart';
 import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_text_field.dart';
-import 'package:car_rental/components/location_field.dart';
 import 'package:car_rental/components/waiting_dialog.dart';
 import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/screens/signin_screen.dart';
-import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:khalti/khalti.dart';
 

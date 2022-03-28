@@ -3,6 +3,7 @@ import 'package:car_rental/screens/admin/admin_home_page.dart';
 import 'package:car_rental/screens/admin/edit_car.dart';
 import 'package:car_rental/screens/forgot_password.dart';
 import 'package:car_rental/screens/user/available_cars.dart';
+import 'package:car_rental/screens/user/maps_screen.dart';
 import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/screens/splash_screen.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
@@ -67,6 +68,9 @@ class CarRental extends StatelessWidget {
                   as Map<String, dynamic>),
           UserHomePage.id: (context) => const UserHomePage(),
           AvailableCars.id: (context) => AvailableCars(
+              args: ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>),
+          MapsPage.id: (context) => MapsPage(
               args: ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>),
           Payment.id: (context) => Payment(

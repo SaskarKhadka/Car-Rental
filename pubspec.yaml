@@ -44,6 +44,7 @@ dependencies:
   flutter_local_notifications: ^9.4.0
   http: ^0.13.4
   searchfield: ^0.6.2
+  google_maps_flutter: ^2.1.3
 
 
 

@@ -8,6 +8,7 @@ import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
 import 'package:car_rental/screens/signin_screen.dart';
+import 'package:car_rental/screens/user/maps_screen.dart';
 import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
@@ -170,17 +171,6 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                 const SizedBox(
                                   height: 12.0,
                                 ),
-                                Text(
-                                  "Location: ${order.pickUpLocation}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.0,
-                                    fontFamily: "Montserrat",
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 12.0,
-                                ),
                                 const SizedBox(height: 15.0),
                               ],
                             ),
@@ -216,17 +206,6 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                 ),
                                 Text(
                                   "Time: ${order.dropOffTime}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.0,
-                                    fontFamily: "Montserrat",
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 12.0,
-                                ),
-                                Text(
-                                  "Location: ${order.dropOffLocation}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
@@ -413,6 +392,20 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          iconButton(
+                            onTap: () {
+                              navigatorKey.currentState!.pushNamed(
+                                MapsPage.id,
+                                arguments: {
+                                  "pickUpLocation": order.pickUpLocation,
+                                  "dropOffLocation": order.dropOffLocation,
+                                  "isViewMode": true,
+                                },
+                              );
+                            },
+                            color: Colors.deepPurpleAccent,
+                            icon: Icons.location_on_outlined,
+                          ),
                           iconButton(
                             onTap: () {
                               showDialog(

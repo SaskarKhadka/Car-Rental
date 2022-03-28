@@ -10,6 +10,7 @@ import 'package:car_rental/model/car.dart';
 import 'package:car_rental/model/order.dart';
 import 'package:car_rental/model/user.dart';
 import 'package:car_rental/screens/signin_screen.dart';
+import 'package:car_rental/screens/user/maps_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/google_auth.dart';
@@ -204,17 +205,6 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                 const SizedBox(
                                   height: 12.0,
                                 ),
-                                Text(
-                                  "Location: ${order.pickUpLocation}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.0,
-                                    fontFamily: "Montserrat",
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 12.0,
-                                ),
                                 const SizedBox(height: 15.0),
                               ],
                             ),
@@ -250,17 +240,6 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                 ),
                                 Text(
                                   "Time: ${order.dropOffTime}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.0,
-                                    fontFamily: "Montserrat",
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 12.0,
-                                ),
-                                Text(
-                                  "Location: ${order.dropOffLocation}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
@@ -456,6 +435,20 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                             await Database.endBargain(
                                                 order.docID);
                                             navigatorKey.currentState!.pop();
+                                            try {
+                                              final token =
+                                                  await Database.getToken(
+                                                      order.placedBy);
+                                              await NotificationHandler
+                                                  .sendNotification(
+                                                token: token,
+                                                body:
+                                                    "Your bargain has ended for Rs.${order.bargain}",
+                                                title: "Bargain Ended",
+                                              );
+                                            } catch (ex) {
+                                              print(ex.toString());
+                                            }
                                             getToast(
                                               message:
                                                   "The bargain is now ended",
@@ -563,6 +556,20 @@ class _UserOrdersStreamState extends State<UserOrdersStream> {
                                     ),
                                   );
                                 }),
+                          ),
+                          iconButton(
+                            onTap: () {
+                              navigatorKey.currentState!.pushNamed(
+                                MapsPage.id,
+                                arguments: {
+                                  "pickUpLocation": order.pickUpLocation,
+                                  "dropOffLocation": order.dropOffLocation,
+                                  "isViewMode": true,
+                                },
+                              );
+                            },
+                            color: Colors.deepPurpleAccent,
+                            icon: Icons.location_on_outlined,
                           ),
                           iconButton(
                             onTap: () {

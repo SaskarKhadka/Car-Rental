@@ -1,14 +1,9 @@
 import 'package:car_rental/components/car_details_dialog.dart';
 import 'package:car_rental/components/continue_dialog.dart';
-import 'package:car_rental/components/custom_button.dart';
 import 'package:car_rental/components/custom_exception.dart';
-import 'package:car_rental/constants/constants.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
-import 'package:car_rental/screens/admin/edit_car.dart';
-import 'package:car_rental/screens/admin/tab_pages/cars.dart';
 import 'package:car_rental/screens/signin_screen.dart';
-import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/notification.dart';
@@ -370,6 +365,7 @@ class AvailableCarsStream extends StatelessWidget {
                                           if (totalOrders == 3) {
                                             navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
+                                            navigatorKey.currentState!.pop();
                                             return getToast(
                                               message:
                                                   "You can only place 3 orders at a time",
@@ -380,6 +376,7 @@ class AvailableCarsStream extends StatelessWidget {
                                               await Database
                                                   .verificationExists();
                                           if (!verificationExists) {
+                                            navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
                                             return getToast(
@@ -405,6 +402,7 @@ class AvailableCarsStream extends StatelessWidget {
                                                       args!);
                                               navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();
+                                              navigatorKey.currentState!.pop();
                                               getToast(
                                                 message:
                                                     "Your order has been placed",
@@ -425,6 +423,7 @@ class AvailableCarsStream extends StatelessWidget {
                                             } on CustomException catch (ex) {
                                               navigatorKey.currentState!.pop();
                                               navigatorKey.currentState!.pop();
+                                              navigatorKey.currentState!.pop();
                                               return getToast(
                                                 message:
                                                     "Your order couldnot be placed",
@@ -432,6 +431,7 @@ class AvailableCarsStream extends StatelessWidget {
                                               );
                                             }
                                           } else {
+                                            navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
                                             navigatorKey.currentState!.pop();
                                             return getToast(
