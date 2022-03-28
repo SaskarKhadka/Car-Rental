@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: "Montserrat",
-                    fontSize: 40.0,
+                    fontSize: 30.0,
                     fontWeight: FontWeight.w700,
                     color: Color(0xffECECEC),
                     letterSpacing: 1.5,
