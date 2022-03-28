@@ -25,8 +25,8 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState>? scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
-    pickUpLocationController.text = places[0];
-    dropOffLocationController.text = places[1];
+    // pickUpLocationController.text = places[0];
+    // dropOffLocationController.text = places[1];
     super.initState();
   }
 
@@ -62,19 +62,19 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: "Montserrat",
-                    fontSize: 35.0,
+                    fontSize: 30.0,
                     fontWeight: FontWeight.w700,
                     color: Color(0xffECECEC),
                     letterSpacing: 1.5,
                   ),
                 ),
-                const Center(
-                  child: Image(
-                    image: AssetImage('images/vector.png'),
-                    height: 250,
-                    width: 250,
-                  ),
-                ),
+                // const Center(
+                //   child: Image(
+                //     image: AssetImage('images/vector.png'),
+                //     height: 250,
+                //     width: 250,
+                //   ),
+                // ),
                 // const SizedBox(
                 //   height: 15.0,
                 // ),
