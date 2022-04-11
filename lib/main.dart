@@ -6,6 +6,7 @@ import 'package:car_rental/screens/user/available_cars.dart';
 import 'package:car_rental/screens/user/maps_screen.dart';
 import 'package:car_rental/screens/user/payment_screen.dart';
 import 'package:car_rental/screens/splash_screen.dart';
+import 'package:car_rental/screens/user/tab_pages/booking_page.dart';
 import 'package:car_rental/screens/user/user_home_page.dart';
 import 'package:car_rental/state/car_pics_state.dart';
 import 'package:car_rental/state/car_state.dart';
@@ -77,6 +78,9 @@ class CarRental extends StatelessWidget {
               args: ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>),
           ForgotPassword.id: (context) => ForgotPassword(),
+          Booking.id: (context) => Booking(
+              args: ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>),
         },
       ),
     );

@@ -4,6 +4,7 @@ import 'package:car_rental/components/custom_exception.dart';
 import 'package:car_rental/main.dart';
 import 'package:car_rental/model/car.dart';
 import 'package:car_rental/screens/signin_screen.dart';
+import 'package:car_rental/screens/user/tab_pages/booking_page.dart';
 import 'package:car_rental/services/authentication.dart';
 import 'package:car_rental/services/database.dart';
 import 'package:car_rental/services/notification.dart';
@@ -131,96 +132,102 @@ class AvailableCarsStream extends StatelessWidget {
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () async {
-                        await Provider.of<ImageIndexState>(context,
-                                listen: false)
-                            .resolveTotalPics(car!.docID);
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            // backgroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Provider.of<ImageIndexState>(context,
-                                                  listen: false)
-                                              .changeState(-1);
-                                        },
-                                        child: const Icon(
-                                          EvaIcons.arrowBackOutline,
-                                        ),
-                                      ),
-                                      Image.network(
-                                          car.picsUrl[
-                                              Provider.of<ImageIndexState>(
-                                                      context,
-                                                      listen: true)
-                                                  .imageIndex!],
-                                          height: 200.0,
-                                          width: 200.0,
-                                          fit: BoxFit.fill, loadingBuilder:
-                                              (_, child, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 30.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              CircularProgressIndicator(
-                                                color: Colors.black,
-                                                value: loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }),
-                                      GestureDetector(
-                                          onTap: () {
-                                            Provider.of<ImageIndexState>(
-                                                    context,
-                                                    listen: false)
-                                                .changeState(1);
-                                          },
-                                          child: const Icon(
-                                              EvaIcons.arrowForwardOutline)),
-                                    ],
+                      onTap: car!.picsUrl.length < 1
+                          ? () {}
+                          : () async {
+                              await Provider.of<ImageIndexState>(context,
+                                      listen: false)
+                                  .resolveTotalPics(car.docID);
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  // backgroundColor: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Provider.of<ImageIndexState>(
+                                                        context,
+                                                        listen: false)
+                                                    .changeState(-1);
+                                              },
+                                              child: const Icon(
+                                                EvaIcons.arrowBackOutline,
+                                              ),
+                                            ),
+                                            Image.network(
+                                                car.picsUrl[Provider.of<
+                                                            ImageIndexState>(
+                                                        context,
+                                                        listen: true)
+                                                    .imageIndex!],
+                                                height: 200.0,
+                                                width: 200.0,
+                                                fit: BoxFit.fill,
+                                                loadingBuilder: (_, child,
+                                                    loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 30.0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    CircularProgressIndicator(
+                                                      color: Colors.black,
+                                                      value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded /
+                                                              loadingProgress
+                                                                  .expectedTotalBytes!
+                                                          : null,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                            GestureDetector(
+                                                onTap: () {
+                                                  Provider.of<ImageIndexState>(
+                                                          context,
+                                                          listen: false)
+                                                      .changeState(1);
+                                                },
+                                                child: const Icon(EvaIcons
+                                                    .arrowForwardOutline)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
                         child: Image.network(
-                          car!.coverPicUrl,
+                          car.coverPicUrl,
                           height: 100.0,
                           width: 100.0,
                           fit: BoxFit.fill,
@@ -336,116 +343,9 @@ class AvailableCarsStream extends StatelessWidget {
                                 padding: const EdgeInsets.only(right: 18.0),
                                 child: InkWell(
                                   onTap: () async {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (context) => continueDialog(
-                                        title: "Place Order",
-                                        message:
-                                            "Are you sure you want to continue?",
-                                        onYes: () async {
-                                          navigatorKey.currentState!.pop();
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: const [
-                                                CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                  backgroundColor: Colors.black,
-                                                ),
-                                              ],
-                                            ),
-                                          );
-
-                                          final int totalOrders =
-                                              await Database.totalOrder(
-                                                  Authentication.userID);
-                                          if (totalOrders == 3) {
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            return getToast(
-                                              message:
-                                                  "You can only place 3 orders at a time",
-                                              color: Colors.red,
-                                            );
-                                          }
-                                          final bool verificationExists =
-                                              await Database
-                                                  .verificationExists();
-                                          if (!verificationExists) {
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            return getToast(
-                                              message:
-                                                  "You need to upload your Citizenship and Lisence picture",
-                                              color: Colors.red,
-                                            );
-                                          }
-                                          final bool phoneNumberExists =
-                                              await Database
-                                                  .phoneNumberExists();
-                                          if (phoneNumberExists) {
-                                            args!["car"] = car.docID;
-                                            args!["placedBy"] =
-                                                Authentication.userID;
-                                            args!["timestamp"] =
-                                                DateTime.now().toString();
-                                            // await Database.placeOrder(
-                                            //     args!);
-                                            try {
-                                              await Database
-                                                  .orderPlacingTransaction(
-                                                      args!);
-                                              navigatorKey.currentState!.pop();
-                                              navigatorKey.currentState!.pop();
-                                              navigatorKey.currentState!.pop();
-                                              getToast(
-                                                message:
-                                                    "Your order has been placed",
-                                                color: Colors.green,
-                                              );
-                                              try {
-                                                final tokens = await Database
-                                                    .getAdminsToken();
-                                                await NotificationHandler
-                                                    .sendNotification(
-                                                  token: tokens[0],
-                                                  body: "You have a new order",
-                                                  title: "New Order",
-                                                );
-                                              } catch (ex) {
-                                                print(ex.toString());
-                                              }
-                                            } on CustomException catch (ex) {
-                                              navigatorKey.currentState!.pop();
-                                              navigatorKey.currentState!.pop();
-                                              navigatorKey.currentState!.pop();
-                                              return getToast(
-                                                message:
-                                                    "Your order couldnot be placed",
-                                                color: Colors.red,
-                                              );
-                                            }
-                                          } else {
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            navigatorKey.currentState!.pop();
-                                            return getToast(
-                                              message:
-                                                  "You need to set your phone number.",
-                                              color: Colors.red,
-                                            );
-                                          }
-                                        },
-                                        onNo: () {
-                                          navigatorKey.currentState!.pop();
-                                        },
-                                      ),
-                                    );
+                                    args!["car"] = car.docID;
+                                    navigatorKey.currentState!
+                                        .pushNamed(Booking.id, arguments: args);
                                   },
                                   child: Container(
                                     height: 35,

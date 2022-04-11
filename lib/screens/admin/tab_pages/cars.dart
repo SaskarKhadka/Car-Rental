@@ -198,96 +198,104 @@ class CarStream extends StatelessWidget {
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () async {
-                        await Provider.of<ImageIndexState>(context,
-                                listen: false)
-                            .resolveTotalPics(car!.docID);
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            // backgroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Provider.of<ImageIndexState>(context,
-                                                  listen: false)
-                                              .changeState(-1);
-                                        },
-                                        child: const Icon(
-                                          EvaIcons.arrowBackOutline,
-                                        ),
-                                      ),
-                                      Image.network(
-                                          car.picsUrl[
-                                              Provider.of<ImageIndexState>(
-                                                      context,
-                                                      listen: true)
-                                                  .imageIndex!],
-                                          height: 200.0,
-                                          width: 200.0,
-                                          fit: BoxFit.fill, loadingBuilder:
-                                              (_, child, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 30.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              CircularProgressIndicator(
-                                                color: Colors.black,
-                                                value: loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }),
-                                      GestureDetector(
-                                          onTap: () {
-                                            Provider.of<ImageIndexState>(
-                                                    context,
-                                                    listen: false)
-                                                .changeState(1);
-                                          },
-                                          child: const Icon(
-                                              EvaIcons.arrowForwardOutline)),
-                                    ],
+                      onTap: car!.picsUrl.length < 1
+                          ? () {
+                              print(car.picsUrl.length);
+                            }
+                          : () async {
+                              await Provider.of<ImageIndexState>(context,
+                                      listen: false)
+                                  .resolveTotalPics(car.docID);
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  // backgroundColor: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Provider.of<ImageIndexState>(
+                                                        context,
+                                                        listen: false)
+                                                    .changeState(-1);
+                                              },
+                                              child: const Icon(
+                                                EvaIcons.arrowBackOutline,
+                                              ),
+                                            ),
+                                            Image.network(
+                                                car.picsUrl[Provider.of<
+                                                            ImageIndexState>(
+                                                        context,
+                                                        listen: true)
+                                                    .imageIndex!],
+                                                height: 200.0,
+                                                width: 200.0,
+                                                fit: BoxFit.fill,
+                                                loadingBuilder: (_, child,
+                                                    loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 30.0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    CircularProgressIndicator(
+                                                      color: Colors.black,
+                                                      value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded /
+                                                              loadingProgress
+                                                                  .expectedTotalBytes!
+                                                          : null,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                            GestureDetector(
+                                                onTap: () {
+                                                  Provider.of<ImageIndexState>(
+                                                          context,
+                                                          listen: false)
+                                                      .changeState(1);
+                                                },
+                                                child: const Icon(EvaIcons
+                                                    .arrowForwardOutline)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
                         child: Image.network(
-                          car!.coverPicUrl,
+                          car.coverPicUrl,
                           height: 100.0,
                           width: 100.0,
                           fit: BoxFit.fill,
